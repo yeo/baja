@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	command.Register("init")
+	command.Register("init", &command.InitCmd{})
 	command.Process(os.Args)
 }

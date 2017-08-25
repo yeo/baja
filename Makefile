@@ -1,4 +1,4 @@
 APP := baja
 
 build:
-	cd cmd && go build -o $(APP)
+	cd cmd && go build -o ../$(APP)

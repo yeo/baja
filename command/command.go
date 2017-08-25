@@ -6,7 +6,7 @@ import (
 )
 
 type CmdRunner interface {
-	Run() int
+	Run(args []string) int
 }
 
 type CmdHandler func([]string) CmdRunner
@@ -29,7 +29,7 @@ func Process(args []string) {
 	}
 
 	if runner := registries[args[1]]; runner != nil {
-		os.Exit(registries[args[1]].Run())
+		os.Exit(registries[args[1]].Run(args[2:]))
 	} else {
 		fmt.Println("Unknow command")
 		os.Exit(255)

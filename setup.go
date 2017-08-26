@@ -8,12 +8,16 @@ import (
 
 // Initalize a new blog directory
 func Setup(name string) error {
-	root := filepath.Join(".", name)
-	os.MkdirAll(root, os.ModePerm)
-	content := filepath.Join(".", name, "content")
-	os.MkdirAll(content, os.ModePerm)
-	theme := filepath.Join(".", name, "theme")
-	os.MkdirAll(theme, os.ModePerm)
+	path := []string{
+		filepath.Join(".", name),
+		filepath.Join(".", name, "content"),
+		filepath.Join(".", name, "theme"),
+		filepath.Join(".", name, "public"),
+	}
+
+	for _, p := range path {
+		os.MkdirAll(p, os.ModePerm)
+	}
 
 	return nil
 }

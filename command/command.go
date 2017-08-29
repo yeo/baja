@@ -29,9 +29,13 @@ func Process(args []string) {
 	}
 
 	if runner := registries[args[1]]; runner != nil {
-		os.Exit(registries[args[1]].Run(args[2:]))
+		if len(args) >= 3 {
+			os.Exit(registries[args[1]].Run(args[2:]))
+		} else {
+			os.Exit(registries[args[1]].Run([]string{}))
+		}
 	} else {
-		fmt.Println("Unknow command")
+		fmt.Println("Unknow command", args)
 		os.Exit(255)
 	}
 }

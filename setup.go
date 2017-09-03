@@ -11,13 +11,15 @@ func Setup(name string) error {
 	path := []string{
 		filepath.Join(".", name),
 		filepath.Join(".", name, "content"),
-		filepath.Join(".", name, "theme"),
-		filepath.Join(".", name, "public"),
+		filepath.Join(".", name, "theme/baja"),
+		filepath.Join(".", name, "public/asset"),
 	}
 
 	for _, p := range path {
 		os.MkdirAll(p, os.ModePerm)
 	}
 
+	c := NewConfig("./" + name + "/baja.yaml")
+	c.WriteFile()
 	return nil
 }

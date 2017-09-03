@@ -36,6 +36,6 @@ func visit(path string, f os.FileInfo, err error) error {
 }
 
 func BuildNodeTree(directory string) *TreeNode {
-	err := filepath.Walk(directory, visit)
-
+	//err := filepath.Walk(directory, visit)
+	return nil
 }

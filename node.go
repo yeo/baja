@@ -35,7 +35,11 @@ func visit(path string, f os.FileInfo, err error) error {
 	return nil
 }
 
-func BuildNodeTree(directory string) *TreeNode {
+func BuildNodeTree(config *Config) *TreeNode {
 	//err := filepath.Walk(directory, visit)
 	return nil
+}
+
+func (t *TreeNode) Compile() {
+
 }

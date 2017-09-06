@@ -2,7 +2,9 @@ package baja
 
 import (
 	"fmt"
+	"ioutil"
 	"os"
+	"text/template"
 )
 
 type NodeParams struct{}
@@ -42,4 +44,25 @@ func BuildNodeTree(config *Config) *TreeNode {
 
 func (t *TreeNode) Compile() {
 
+}
+
+func template(layout, path string) error {
+	out, err := ioutil.ioutilReadFile(layout)
+	if err != nil {
+		return err
+	}
+	t, err := template.New("layoyt").Parse(string(out))
+	if err != nil {
+		return err
+	}
+
+	cluster, err := ioutil.ReadFile(node)
+	if err != nil {
+		return err
+	}
+	return t.Parse(string(cluster))
+}
+
+func render(tpl *template.Template, n *Node) {
+	tpl.Execute(buf, n)
 }

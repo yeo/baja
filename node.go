@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ioutil"
 	"os"
+	"path/filepath"
 	"text/template"
 )
 
@@ -32,13 +33,17 @@ func NewNode(path string) *Node {
 
 type visitor func(path string, f os.FileInfo, err error) error
 
-func visit(path string, f os.FileInfo, err error) error {
-	fmt.Printf("Visited: %s\n", path)
-	return nil
+func visit(node *TreeNode) filepath.WalkFun {
+	return func(path string, f os.FileInfo, err error) error {
+		fmt.Printf("Visited: %s\n", path)
+
+		return nil
+	}
 }
 
 func BuildNodeTree(config *Config) *TreeNode {
-	//err := filepath.Walk(directory, visit)
+	n := &TreeNode{}
+	err := filepath.Walk("./content", visit(n))
 	return nil
 }
 

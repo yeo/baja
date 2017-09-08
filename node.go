@@ -2,7 +2,7 @@ package baja
 
 import (
 	"fmt"
-	"ioutil"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -13,6 +13,7 @@ type NodeParams struct{}
 type TreeNode struct {
 	Name  string
 	Leafs []TreeNode
+	Type  string
 }
 
 type Node struct {
@@ -33,17 +34,20 @@ func NewNode(path string) *Node {
 
 type visitor func(path string, f os.FileInfo, err error) error
 
-func visit(node *TreeNode) filepath.WalkFun {
+func visit(node *TreeNode) filepath.WalkFunc {
 	return func(path string, f os.FileInfo, err error) error {
 		fmt.Printf("Visited: %s\n", path)
 
+		if f.IsDir() {
+
+		}
 		return nil
 	}
 }
 
 func BuildNodeTree(config *Config) *TreeNode {
 	n := &TreeNode{}
-	err := filepath.Walk("./content", visit(n))
+	_ = filepath.Walk("./content", visit(n))
 	return nil
 }
 
@@ -51,8 +55,8 @@ func (t *TreeNode) Compile() {
 
 }
 
-func template(layout, path string) error {
-	out, err := ioutil.ioutilReadFile(layout)
+func _template(layout, path string) error {
+	out, err := ioutil.ReadFile(layout)
 	if err != nil {
 		return err
 	}
@@ -61,13 +65,14 @@ func template(layout, path string) error {
 		return err
 	}
 
-	cluster, err := ioutil.ReadFile(node)
+	cluster, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	return t.Parse(string(cluster))
+	t, err = t.Parse(string(cluster))
+	return err
 }
 
 func render(tpl *template.Template, n *Node) {
-	tpl.Execute(buf, n)
+	//tpl.Execute(buf, n)
 }

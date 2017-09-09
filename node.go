@@ -3,9 +3,12 @@ package baja
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
+	"github.com/BurntSushi/toml"
 )
 
 type NodeParams struct{}
@@ -16,9 +19,12 @@ type TreeNode struct {
 	Type  string
 }
 
-type Node struct {
+type NodeMeta struct {
 	Title string
-	Body  string
+}
+type Node struct {
+	Meta *NodeMeta
+	Body string
 
 	Params *NodeParams
 
@@ -32,6 +38,23 @@ func NewNode(path string) *Node {
 	return &n
 }
 
+func (n *Node) Parse() {
+	content, err := ioutil.ReadFile(n.Path)
+	if err != nil {
+		log.Fatal("Cannot parse", n.Path)
+	}
+
+	part := strings.Split(string(content), "+++")
+	if len(part) < 3 {
+		log.Fatal("Not enough header/body", n.Path)
+	}
+
+	n.Meta = &NodeMeta{}
+	toml.Decode(string(part[1], n.Meta)
+
+	n.Body = string(content[2])
+}
+
 type visitor func(path string, f os.FileInfo, err error) error
 
 func visit(node *TreeNode) filepath.WalkFunc {
@@ -39,8 +62,12 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		fmt.Printf("Visited: %s\n", path)
 
 		if f.IsDir() {
-
+			os.MkdirAll("./public/" + path)
+			return nil
 		}
+
+		//Super simple parsing
+
 		return nil
 	}
 }

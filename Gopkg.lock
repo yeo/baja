@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
+  version = "v0.3.0"
+
+[[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -10,6 +16,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9aeea773a778bfcaf7a592cba29482cc41403ac6642e31709d7a2ad5b9562347"
+  inputs-digest = "362d3e434239e1d5aec99adb516eb702a8be320d0cfca3955896c0c0a986f729"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -2,13 +2,13 @@ package baja
 
 import (
 	"fmt"
+	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
-	"github.com/BurntSushi/toml"
 )
 
 type NodeParams struct{}
@@ -22,6 +22,7 @@ type TreeNode struct {
 type NodeMeta struct {
 	Title string
 }
+
 type Node struct {
 	Meta *NodeMeta
 	Body string
@@ -33,7 +34,7 @@ type Node struct {
 }
 
 func NewNode(path string) *Node {
-	n := Node{}
+	n := Node{Path: path}
 
 	return &n
 }
@@ -50,9 +51,17 @@ func (n *Node) Parse() {
 	}
 
 	n.Meta = &NodeMeta{}
-	toml.Decode(string(part[1], n.Meta)
+	toml.Decode(string(part[1]), n.Meta)
 
 	n.Body = string(content[2])
+}
+
+func (n *Node) FindTheme(c *Config) {
+	// Find theme
+	pathComponents := strings.Split(n.Path, "/")
+	pathComponents[0] = c.Theme
+	pathComponents = append([]string{"theme"}, pathComponents)
+
 }
 
 type visitor func(path string, f os.FileInfo, err error) error
@@ -62,11 +71,14 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		fmt.Printf("Visited: %s\n", path)
 
 		if f.IsDir() {
-			os.MkdirAll("./public/" + path)
+			os.MkdirAll("./public/"+path, os.ModePerm)
 			return nil
 		}
 
 		//Super simple parsing
+		n := NewNode(path)
+		n.Parse()
+		n.FindTheme(DefaultConfig())
 
 		return nil
 	}

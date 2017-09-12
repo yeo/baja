@@ -3,6 +3,8 @@ package baja
 import (
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"log"
 	"os"
@@ -41,9 +43,12 @@ func NewNode(path string) *Node {
 }
 
 func (n *Node) data() map[string]interface{} {
+	unsafe := blackfriday.MarkdownCommon(n.Body)
+	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+
 	return map[string]interface{}{
 		"meta": n.Meta,
-		"body": n.Body,
+		"body": blackfriday.MarkdownCommon(n.Body),
 	}
 }
 

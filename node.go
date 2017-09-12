@@ -29,14 +29,22 @@ type Node struct {
 
 	Params *NodeParams
 
-	Raw  string
-	Path string
+	Raw           string
+	Path          string
+	templatePaths []string
 }
 
 func NewNode(path string) *Node {
 	n := Node{Path: path}
 
 	return &n
+}
+
+func (n *Node) data() map[string]interface{} {
+	return map[string]interface{}{
+		"meta": n.Meta,
+		"body": n.Body,
+	}
 }
 
 func (n *Node) Parse() {
@@ -62,6 +70,12 @@ func (n *Node) FindTheme(c *Config) {
 	pathComponents[0] = c.Theme
 	pathComponents = append([]string{"theme"}, pathComponents)
 
+	n.templatePaths = pathComponents
+}
+
+func (n *Node) Compile(w *io.Writer) {
+	tpl := template.ParseFile(n.templatePaths...)
+	tpl.ExecuteTemplate(w, "layout", n.data())
 }
 
 type visitor func(path string, f os.FileInfo, err error) error
@@ -99,7 +113,7 @@ func _template(layout, path string) error {
 	if err != nil {
 		return err
 	}
-	t, err := template.New("layoyt").Parse(string(out))
+	t, err := template.New("layout").Parse(string(out))
 	if err != nil {
 		return err
 	}
@@ -110,8 +124,4 @@ func _template(layout, path string) error {
 	}
 	t, err = t.Parse(string(cluster))
 	return err
-}
-
-func render(tpl *template.Template, n *Node) {
-	//tpl.Execute(buf, n)
 }

@@ -43,12 +43,12 @@ func NewNode(path string) *Node {
 }
 
 func (n *Node) data() map[string]interface{} {
-	unsafe := blackfriday.MarkdownCommon(n.Body)
+	unsafe := blackfriday.Run([]byte(n.Body))
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	return map[string]interface{}{
 		"meta": n.Meta,
-		"body": blackfriday.MarkdownCommon(n.Body),
+		"body": blackfriday.Run([]byte(n.Body)),
 	}
 }
 
@@ -73,9 +73,10 @@ func (n *Node) FindTheme(c *Config) {
 	// Find theme
 	pathComponents := strings.Split(n.Path, "/")
 	pathComponents[0] = c.Theme
-	pathComponents = append([]string{"theme"}, pathComponents)
-
-	n.templatePaths = pathComponents
+	n.templatePaths = []string{"theme"}
+	for _, p := range pathComponents {
+		n.templatePaths = append(n.templatePaths, p)
+	}
 }
 
 func (n *Node) Compile(w *io.Writer) {

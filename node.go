@@ -77,7 +77,7 @@ func (n *Node) Parse() {
 func (n *Node) FindTheme(c *Config) {
 	// Find theme
 	pathComponents := strings.Split(n.Name, "/")
-	n.templatePaths = []string{}
+	n.templatePaths = []string{"themes/" + c.Theme + "/layout/default.html"}
 	lookupPath := "themes/" + c.Theme
 	for _, p := range pathComponents {
 		if _, err := os.Stat(lookupPath + "/node.html"); err == nil {
@@ -85,8 +85,6 @@ func (n *Node) FindTheme(c *Config) {
 		}
 		lookupPath = lookupPath + "/" + p
 	}
-
-	log.Println("tpl", n.templatePaths)
 }
 
 func (n *Node) Compile() {
@@ -101,12 +99,23 @@ func (n *Node) Compile() {
 
 	fmt.Println(n.templatePaths)
 
-	tpl, err := template.ParseFiles(n.templatePaths...)
-	if err != nil {
-		log.Println("Cannot parse tempalte", n.Path)
-	}
+	tpl := template.New("layout")
+	for i := len(n.templatePaths) - 1; i >= 0; i-- {
+		t := n.templatePaths[i]
+		if out, err := ioutil.ReadFile(t); err == nil {
+			if tpl, err = tpl.Parse(string(out)); err != nil {
+				log.Println("Cannot parse", t, err)
+			}
+		}
 
-	tpl.ExecuteTemplate(w, "layout", n.data())
+	}
+	log.Println("Loaded", n.templatePaths)
+
+	//tpl.Execute(os.Stdout, n.data())
+	if err := tpl.Execute(w, n.data()); err != nil {
+		log.Println("Fail to render", err)
+	}
+	w.Flush()
 }
 
 type visitor func(path string, f os.FileInfo, err error) error

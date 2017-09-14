@@ -35,11 +35,14 @@ type Node struct {
 
 	Raw           string
 	Path          string
+	Name          string
 	templatePaths []string
 }
 
 func NewNode(path string) *Node {
 	n := Node{Path: path}
+	dotPosition := strings.LastIndex(path, ".")
+	n.Name = path[0:dotPosition]
 
 	return &n
 }
@@ -73,18 +76,21 @@ func (n *Node) Parse() {
 
 func (n *Node) FindTheme(c *Config) {
 	// Find theme
-	pathComponents := strings.Split(n.Path, "/")
-	pathComponents[0] = c.Theme
-	n.templatePaths = []string{"theme"}
+	pathComponents := strings.Split(n.Name, "/")
+	n.templatePaths = []string{}
+	lookupPath := "themes/" + c.Theme
 	for _, p := range pathComponents {
-		n.templatePaths = append(n.templatePaths, p)
+		if _, err := os.Stat(lookupPath + "/node.html"); err == nil {
+			n.templatePaths = append(n.templatePaths, lookupPath+"/node.html")
+		}
+		lookupPath = lookupPath + "/" + p
 	}
+
+	log.Println("tpl", n.templatePaths)
 }
 
 func (n *Node) Compile() {
-	to := "public/" + n.Path
-	dotPosition := strings.LastIndex(to, ".")
-	directory := to[0:dotPosition]
+	directory := "public/" + n.Name
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
 	if err != nil {

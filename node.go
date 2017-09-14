@@ -1,16 +1,18 @@
 package baja
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+	"html/template"
+	//"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
 )
 
 type NodeParams struct{}
@@ -48,7 +50,7 @@ func (n *Node) data() map[string]interface{} {
 
 	return map[string]interface{}{
 		"meta": n.Meta,
-		"body": blackfriday.Run([]byte(n.Body)),
+		"body": html,
 	}
 }
 
@@ -79,8 +81,25 @@ func (n *Node) FindTheme(c *Config) {
 	}
 }
 
-func (n *Node) Compile(w *io.Writer) {
-	tpl := template.ParseFile(n.templatePaths...)
+func (n *Node) Compile() {
+	to := "public/" + n.Path
+	dotPosition := strings.LastIndex(to, ".")
+	directory := to[0:dotPosition]
+	os.MkdirAll(directory, os.ModePerm)
+	f, err := os.Create(directory + "/index.html")
+	if err != nil {
+		log.Println("Cannot write to file", err, directory)
+	}
+
+	w := bufio.NewWriter(f)
+
+	fmt.Println(n.templatePaths)
+
+	tpl, err := template.ParseFiles(n.templatePaths...)
+	if err != nil {
+		log.Println("Cannot parse tempalte", n.Path)
+	}
+
 	tpl.ExecuteTemplate(w, "layout", n.data())
 }
 
@@ -99,6 +118,7 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		n := NewNode(path)
 		n.Parse()
 		n.FindTheme(DefaultConfig())
+		n.Compile()
 
 		return nil
 	}

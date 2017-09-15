@@ -6,5 +6,6 @@ func Build() int {
 
 	tree := BuildNodeTree(config)
 	tree.Compile()
+	compileAsset(config)
 	return 0
 }

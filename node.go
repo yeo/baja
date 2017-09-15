@@ -52,8 +52,9 @@ func (n *Node) data() map[string]interface{} {
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	return map[string]interface{}{
-		"meta": n.Meta,
-		"body": html,
+		"Meta":      n.Meta,
+		"Body":      html,
+		"Permalink": "/1",
 	}
 }
 

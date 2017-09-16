@@ -127,6 +127,12 @@ func visit(node *TreeNode) filepath.WalkFunc {
 
 		if f.IsDir() {
 			os.MkdirAll("./public/"+path, os.ModePerm)
+
+			l := &NodeList{
+				Directory: path,
+			}
+
+			l.Compile()
 			return nil
 		}
 

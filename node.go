@@ -35,12 +35,15 @@ type Node struct {
 
 	Raw           string
 	Path          string
+	BaseDirectory string
 	Name          string
 	templatePaths []string
 }
 
 func NewNode(path string) *Node {
 	n := Node{Path: path}
+	n.BaseDirectory = filepath.Base(path)
+
 	dotPosition := strings.LastIndex(path, ".")
 	n.Name = path[0:dotPosition]
 
@@ -121,26 +124,30 @@ func (n *Node) Compile() {
 
 type visitor func(path string, f os.FileInfo, err error) error
 
+var NodeDB map[string][]*Node
+
 func visit(node *TreeNode) filepath.WalkFunc {
+	NodeDB = make(map[string][]*Node)
+
 	return func(path string, f os.FileInfo, err error) error {
 		fmt.Printf("Visited: %s\n", path)
 
 		if f.IsDir() {
 			os.MkdirAll("./public/"+path, os.ModePerm)
 
-			l := &NodeList{
-				Directory: path,
+			if _, ok := NodeDB[path]; ok {
+				NodeDB[path] = []*Node{}
 			}
-
-			l.Compile()
 			return nil
 		}
 
+		node.Name = f.Name()
 		//Super simple parsing
 		n := NewNode(path)
 		n.Parse()
 		n.FindTheme(DefaultConfig())
 		n.Compile()
+		NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
 
 		return nil
 	}
@@ -149,6 +156,9 @@ func visit(node *TreeNode) filepath.WalkFunc {
 func BuildNodeTree(config *Config) *TreeNode {
 	n := &TreeNode{}
 	_ = filepath.Walk("./content", visit(n))
+	for dir, nodes := range NodeDB {
+		BuildIndex(dir, nodes)
+	}
 	return nil
 }
 

@@ -1,18 +1,14 @@
 package baja
 
 import (
+	"bufio"
+	"html/template"
+	"log"
 	"os"
 )
 
-type NodeList struct {
-	Directory string
-}
-
-func (l *NodeList) data() []Node {
-}
-
-func (l *NodeList) Compile() {
-	directory := "public/" + l.Directory
+func BuildIndex(dir string, nodes []*Node) {
+	directory := "public/" + dir
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
 	if err != nil {
@@ -20,19 +16,13 @@ func (l *NodeList) Compile() {
 	}
 
 	w := bufio.NewWriter(f)
-
-	tpl := template.New("layout")
-	for i := len(l.templatePaths) - 1; i >= 0; i-- {
-		t := l.templatePaths[i]
-		if out, err := ioutil.ReadFile(t); err == nil {
-			if tpl, err = tpl.Parse(string(out)); err != nil {
-				log.Println("Cannot parse", t, err)
-			}
-		}
+	data := map[string]interface{}{
+		"Nodes": nodes,
 	}
-	log.Println("Loaded", l.templatePaths)
 
-	if err := tpl.Execute(w, l.data()); err != nil {
+	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html", "themes/baja/list.html")
+
+	if err := tpl.Execute(w, data); err != nil {
 		log.Println("Fail to render", err)
 	}
 	w.Flush()

@@ -57,7 +57,7 @@ func (n *Node) data() map[string]interface{} {
 	return map[string]interface{}{
 		"Meta":      n.Meta,
 		"Body":      html,
-		"Permalink": "/1",
+		"Permalink": n.BaseDirectory,
 	}
 }
 

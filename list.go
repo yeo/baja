@@ -17,7 +17,8 @@ func BuildIndex(dir string, nodes []*Node) {
 
 	w := bufio.NewWriter(f)
 	data := map[string]interface{}{
-		"Nodes": nodes,
+		"Permalink": dir,
+		"Nodes":     nodes,
 	}
 
 	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html", "themes/baja/list.html")

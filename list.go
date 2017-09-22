@@ -21,7 +21,12 @@ func BuildIndex(dir string, nodes []*Node) {
 		"Nodes":     nodes,
 	}
 
-	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html", "themes/baja/list.html")
+	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html")
+	if _, err := os.Stat("themes/baja/" + dir + "/list.html"); err == nil {
+		tpl, err = tpl.ParseFiles("themes/baja/" + dir + "/list.html")
+	} else {
+		tpl, err = tpl.ParseFiles("themes/baja/list.html")
+	}
 
 	if err := tpl.Execute(w, data); err != nil {
 		log.Println("Fail to render", err)

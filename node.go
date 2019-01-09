@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/microcosm-cc/bluemonday"
+	//"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"html/template"
 	//"io"
@@ -42,7 +42,7 @@ type Node struct {
 
 func NewNode(path string) *Node {
 	n := Node{Path: path}
-	n.BaseDirectory = filepath.Base(path)
+	n.BaseDirectory = strings.Join(strings.Split(filepath.Dir(path), "/")[1:], "/")
 
 	dotPosition := strings.LastIndex(path, ".")
 	n.Name = path[0:dotPosition]
@@ -50,14 +50,19 @@ func NewNode(path string) *Node {
 	return &n
 }
 
+func (n *Node) Permalink() string {
+	return n.BaseDirectory + "/" + n.Name
+}
+
 func (n *Node) data() map[string]interface{} {
 	unsafe := blackfriday.Run([]byte(n.Body))
-	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+	html := unsafe
 
 	return map[string]interface{}{
 		"Meta":      n.Meta,
-		"Body":      html,
-		"Permalink": n.BaseDirectory,
+		"Body":      string(html),
+		"Permalink": n.Permalink(),
 	}
 }
 
@@ -75,7 +80,7 @@ func (n *Node) Parse() {
 	n.Meta = &NodeMeta{}
 	toml.Decode(string(part[1]), n.Meta)
 
-	n.Body = string(content[2])
+	n.Body = part[2]
 }
 
 func (n *Node) FindTheme(c *Config) {
@@ -92,7 +97,11 @@ func (n *Node) FindTheme(c *Config) {
 }
 
 func (n *Node) Compile() {
-	directory := "public/" + n.Name
+	name := strings.Split(n.Name, "/")
+	directory := "public/" + strings.Join(name[1:], "/")
+	log.Println("Compile", n.Name, directory)
+
+	log.Println("Mkdir", directory)
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
 	if err != nil {
@@ -101,24 +110,31 @@ func (n *Node) Compile() {
 
 	w := bufio.NewWriter(f)
 
-	fmt.Println(n.templatePaths)
+	log.Println(n.templatePaths)
 
 	tpl := template.New("layout")
-	for i := len(n.templatePaths) - 1; i >= 0; i-- {
-		t := n.templatePaths[i]
-		if out, err := ioutil.ReadFile(t); err == nil {
-			if tpl, err = tpl.Parse(string(out)); err != nil {
-				log.Println("Cannot parse", t, err)
-			}
-		}
+	//for i := len(n.templatePaths) - 1; i >= 0; i-- {
+	//	t := n.templatePaths[i]
+	//	if out, err := ioutil.ReadFile(t); err == nil {
+	//		if tpl, err = tpl.Parse(string(out)); err != nil {
+	//			log.Println("Cannot parse", t, err)
+	//		}
+	//	}
+	//}
 
+	tpl, err = tpl.ParseFiles("themes/baja/layout/default.html", "themes/baja/node.html")
+	if err != nil {
+		log.Panic(err)
 	}
+
 	log.Println("Loaded", n.templatePaths)
 
 	//tpl.Execute(os.Stdout, n.data())
 	if err := tpl.Execute(w, n.data()); err != nil {
 		log.Println("Fail to render", err)
 	}
+
+	log.Println("Write to ", directory+"/index.html")
 	w.Flush()
 }
 
@@ -133,8 +149,6 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		fmt.Printf("Visited: %s\n", path)
 
 		if f.IsDir() {
-			os.MkdirAll("./public/"+path, os.ModePerm)
-
 			if _, ok := NodeDB[path]; ok {
 				NodeDB[path] = []*Node{}
 			}
@@ -147,6 +161,7 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		n.Parse()
 		n.FindTheme(DefaultConfig())
 		n.Compile()
+		log.Println("Base Directory", n.BaseDirectory)
 		NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
 
 		return nil
@@ -156,14 +171,13 @@ func visit(node *TreeNode) filepath.WalkFunc {
 func BuildNodeTree(config *Config) *TreeNode {
 	n := &TreeNode{}
 	_ = filepath.Walk("./content", visit(n))
-	for dir, nodes := range NodeDB {
-		BuildIndex(dir, nodes)
-	}
-	return nil
+	return n
 }
 
 func (t *TreeNode) Compile() {
-
+	for dir, nodes := range NodeDB {
+		BuildIndex(dir, nodes)
+	}
 }
 
 func _template(layout, path string) error {

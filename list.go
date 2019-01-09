@@ -9,6 +9,14 @@ import (
 
 func BuildIndex(dir string, nodes []*Node) {
 	directory := "public/" + dir
+
+	if len(nodes) == 0 {
+		log.Println("Directory", dir, "has no file. Skip")
+		return
+	}
+
+	log.Println("Build index", dir, "for", nodes)
+
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
 	if err != nil {
@@ -16,9 +24,21 @@ func BuildIndex(dir string, nodes []*Node) {
 	}
 
 	w := bufio.NewWriter(f)
-	data := map[string]interface{}{
-		"Permalink": dir,
-		"Nodes":     nodes,
+
+	nodeData := make([]map[string]interface{}, len(nodes))
+
+	for i, n := range nodes {
+		nodeData[i] = n.data()
+	}
+
+	data := struct {
+		Title     string
+		Permalink string
+		Nodes     []map[string]interface{}
+	}{
+		dir,
+		dir,
+		nodeData,
 	}
 
 	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html")

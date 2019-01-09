@@ -8,5 +8,6 @@ import (
 func main() {
 	command.Register("init", &command.InitCmd{})
 	command.Register("build", &command.BuildCmd{})
+	command.Register("clean", &command.CleanCmd{})
 	command.Process(os.Args)
 }

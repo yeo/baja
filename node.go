@@ -113,14 +113,6 @@ func (n *Node) Compile() {
 	log.Println(n.templatePaths)
 
 	tpl := template.New("layout")
-	//for i := len(n.templatePaths) - 1; i >= 0; i-- {
-	//	t := n.templatePaths[i]
-	//	if out, err := ioutil.ReadFile(t); err == nil {
-	//		if tpl, err = tpl.Parse(string(out)); err != nil {
-	//			log.Println("Cannot parse", t, err)
-	//		}
-	//	}
-	//}
 
 	tpl, err = tpl.ParseFiles("themes/baja/layout/default.html", "themes/baja/node.html")
 	if err != nil {
@@ -177,11 +169,11 @@ func BuildNodeTree(config *Config) *TreeNode {
 func (t *TreeNode) Compile() {
 	allNodes := []*Node{}
 	for dir, nodes := range NodeDB {
-		BuildIndex(dir, nodes)
+		BuildIndex(dir, nodes, false)
 		allNodes = append(allNodes, nodes...)
 	}
 
-	BuildIndex("", allNodes)
+	BuildIndex("", allNodes, true)
 }
 
 func _template(layout, path string) error {

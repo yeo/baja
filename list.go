@@ -7,15 +7,13 @@ import (
 	"os"
 )
 
-func BuildIndex(dir string, nodes []*Node) {
+func BuildIndex(dir string, nodes []*Node, home bool) {
 	directory := "public/" + dir
 
 	if len(nodes) == 0 {
 		log.Println("Directory", dir, "has no file. Skip")
 		return
 	}
-
-	log.Println("Build index", dir, "for", nodes)
 
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
@@ -42,10 +40,16 @@ func BuildIndex(dir string, nodes []*Node) {
 	}
 
 	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html")
-	if _, err := os.Stat("themes/baja/" + dir + "/list.html"); err == nil {
-		tpl, err = tpl.ParseFiles("themes/baja/" + dir + "/list.html")
-	} else {
-		tpl, err = tpl.ParseFiles("themes/baja/list.html")
+	tpl, err = tpl.ParseFiles("themes/baja/index.html")
+
+	if _, err := os.Stat("themes/baja/" + dir + "/index.html"); err == nil {
+		tpl, err = tpl.ParseFiles("themes/baja/" + dir + "/index.html")
+	}
+
+	if home == true {
+		if _, err := os.Stat("themes/baja/index-home.html"); err == nil {
+			tpl, err = tpl.ParseFiles("themes/baja/index-home.html")
+		}
 	}
 
 	if err := tpl.Execute(w, data); err != nil {

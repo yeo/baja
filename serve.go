@@ -18,13 +18,14 @@ func Run(addr, public string) {
 		staticPath: public,
 	}
 	router(e, s)
+
 	e.Logger.Fatal(e.Start(addr))
 }
 
 // Build execute template and content to generate our real static conent
 func Serve(addr, directory string) int {
-	watcher := NewWatcher(cwd)
-	go watcher.Run()
+	//watcher := NewWatcher(cwd)
+	//go watcher.Run()
 	Run(addr, directory)
 	return 0
 }

@@ -8,7 +8,7 @@ import (
 type ServeCmd struct {
 }
 
-func (c *SerbeCmd) Run(args []string) int {
+func (c *ServeCmd) Run(args []string) int {
 	fmt.Println("Run server")
-	return baja.Serve("./public")
+	return baja.Serve("localhost:2803", "./public")
 }

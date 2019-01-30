@@ -51,7 +51,7 @@ func NewNode(path string) *Node {
 }
 
 func (n *Node) Permalink() string {
-	return n.BaseDirectory + "/" + n.Name
+	return n.BaseDirectory + "/" + filepath.Base(n.Name)
 }
 
 func (n *Node) data() map[string]interface{} {
@@ -175,9 +175,13 @@ func BuildNodeTree(config *Config) *TreeNode {
 }
 
 func (t *TreeNode) Compile() {
+	allNodes := []*Node{}
 	for dir, nodes := range NodeDB {
 		BuildIndex(dir, nodes)
+		allNodes = append(allNodes, nodes...)
 	}
+
+	BuildIndex("", allNodes)
 }
 
 func _template(layout, path string) error {

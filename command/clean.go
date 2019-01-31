@@ -1,7 +1,6 @@
 package command
 
 import (
-	"fmt"
 	"github.com/yeo/baja"
 )
 

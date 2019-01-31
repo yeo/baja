@@ -47,8 +47,8 @@ func BuildIndex(dir string, nodes []*Node, home bool) {
 	}
 
 	if home == true {
-		if _, err := os.Stat("themes/baja/index-home.html"); err == nil {
-			tpl, err = tpl.ParseFiles("themes/baja/index-home.html")
+		if _, err := os.Stat("themes/baja/home.html"); err == nil {
+			tpl, err = tpl.ParseFiles("themes/baja/home.html")
 		}
 	}
 

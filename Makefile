@@ -1,7 +1,7 @@
 APP := baja
 
 build:
-	cd cmd && go build -o ../$(APP)
+	cd cmd && go build -o ../out/$(APP)
 
 install:
-	cp $(APP) ~/bin/
+	cp out/$(APP) ~/bin/

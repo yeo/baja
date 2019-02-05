@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"time"
 	//"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"html/template"
@@ -24,7 +25,10 @@ type TreeNode struct {
 }
 
 type NodeMeta struct {
-	Title string
+	Title         string
+	Draft         bool
+	Date          time.Time
+	DateFormatted string
 }
 
 type Node struct {
@@ -79,6 +83,8 @@ func (n *Node) Parse() {
 
 	n.Meta = &NodeMeta{}
 	toml.Decode(string(part[1]), n.Meta)
+
+	n.Meta.DateFormatted = n.Meta.Date.Format(time.RFC822)
 
 	n.Body = part[2]
 }

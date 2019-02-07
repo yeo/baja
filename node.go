@@ -175,13 +175,32 @@ func BuildNodeTree(config *Config) *TreeNode {
 }
 
 func (t *TreeNode) Compile() {
+	var tagsNode map[string][]*Node
+	tagsNode = make(map[string][]*Node)
+
 	allNodes := []*Node{}
 	for dir, nodes := range NodeDB {
 		BuildIndex(dir, nodes, false)
 		allNodes = append(allNodes, nodes...)
+
+		for _, node := range nodes {
+			if len(node.Meta.Tags) > 0 {
+				for _, tag := range node.Meta.Tags {
+					if tagsNode[tag] == nil {
+						tagsNode[tag] = []*Node{node}
+					} else {
+						tagsNode[tag] = append(tagsNode[tag], node)
+					}
+				}
+			}
+		}
 	}
 
 	BuildIndex("", allNodes, true)
+
+	for t, nodes := range tagsNode {
+		BuildIndex("tag/"+strings.ToLower(t), nodes, true)
+	}
 }
 
 func _template(layout, path string) error {

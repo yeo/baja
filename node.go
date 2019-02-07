@@ -35,7 +35,7 @@ type NodeMeta struct {
 
 type Node struct {
 	Meta *NodeMeta
-	Body string
+	Body template.HTML
 
 	Params *NodeParams
 
@@ -67,7 +67,7 @@ func (n *Node) data() map[string]interface{} {
 
 	return map[string]interface{}{
 		"Meta":      n.Meta,
-		"Body":      string(html),
+		"Body":      template.HTML(html),
 		"Permalink": n.Permalink(),
 	}
 }
@@ -89,7 +89,7 @@ func (n *Node) Parse() {
 	n.Meta.DateFormatted = n.Meta.Date.Format(time.RFC822)
 	n.Meta.Category = n.BaseDirectory
 
-	n.Body = part[2]
+	n.Body = template.HTML(part[2])
 }
 
 func (n *Node) FindTheme(c *Config) {

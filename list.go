@@ -10,6 +10,8 @@ import (
 func BuildIndex(dir string, nodes []*Node, home bool) {
 	directory := "public/" + dir
 
+	sort.Slice(nodes, func(i, j int) bool { return allNodes[i].Meta.Date.After(allNodes[j].Meta.Date) })
+
 	if len(nodes) == 0 {
 		log.Println("Directory", dir, "has no file. Skip")
 		return

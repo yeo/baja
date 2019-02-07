@@ -180,8 +180,6 @@ func (t *TreeNode) Compile() {
 		allNodes = append(allNodes, nodes...)
 	}
 
-	sort.Slice(allNodes, func(i, j *Node) bool { return i.Meta.Date.After(j.Meta.Date) })
-
 	BuildIndex("", allNodes, true)
 }
 

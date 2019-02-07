@@ -31,6 +31,7 @@ type NodeMeta struct {
 	DateFormatted string
 	Tags          []string
 	Category      string
+	Hidden        bool
 }
 
 type Node struct {
@@ -86,7 +87,7 @@ func (n *Node) Parse() {
 	n.Meta = &NodeMeta{}
 	toml.Decode(string(part[1]), n.Meta)
 
-	n.Meta.DateFormatted = n.Meta.Date.Format(time.RFC822)
+	n.Meta.DateFormatted = n.Meta.Date.Format("2006 Jan 2")
 	n.Meta.Category = n.BaseDirectory
 
 	n.Body = template.HTML(part[2])
@@ -162,7 +163,9 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		n.Parse()
 		n.FindTheme(DefaultConfig())
 		n.Compile()
-		NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
+		if n.Meta.Hidden == false {
+			NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
+		}
 
 		return nil
 	}
@@ -198,8 +201,9 @@ func (t *TreeNode) Compile() {
 
 	BuildIndex("", allNodes, true)
 
+	// TODO: concurent
 	for t, nodes := range tagsNode {
-		BuildIndex("tag/"+strings.ToLower(t), nodes, true)
+		BuildIndex("tag/"+strings.ToLower(t), nodes, false)
 	}
 }
 

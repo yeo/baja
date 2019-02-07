@@ -13,7 +13,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 )
 
@@ -30,6 +29,8 @@ type NodeMeta struct {
 	Draft         bool
 	Date          time.Time
 	DateFormatted string
+	Tags          []string
+	Category      string
 }
 
 type Node struct {
@@ -86,6 +87,7 @@ func (n *Node) Parse() {
 	toml.Decode(string(part[1]), n.Meta)
 
 	n.Meta.DateFormatted = n.Meta.Date.Format(time.RFC822)
+	n.Meta.Category = n.BaseDirectory
 
 	n.Body = part[2]
 }
@@ -160,7 +162,6 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		n.Parse()
 		n.FindTheme(DefaultConfig())
 		n.Compile()
-		log.Println("Base Directory", n.BaseDirectory)
 		NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
 
 		return nil

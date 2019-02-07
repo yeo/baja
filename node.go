@@ -87,7 +87,7 @@ func (n *Node) Parse() {
 	n.Meta = &NodeMeta{}
 	toml.Decode(string(part[1]), n.Meta)
 
-	n.Meta.DateFormatted = n.Meta.Date.Format("2006 Jan 2")
+	n.Meta.DateFormatted = n.Meta.Date.Format("2006 Jan 02")
 	n.Meta.Category = n.BaseDirectory
 
 	n.Body = template.HTML(part[2])
@@ -223,4 +223,27 @@ func _template(layout, path string) error {
 	}
 	t, err = t.Parse(string(cluster))
 	return err
+}
+
+func CreateNode(dir, title string) error {
+	slug := strings.Replace(title, " ", "-", -1)
+
+	file, err := os.Create("content/" + dir + "/" + slug + ".md")
+	if err != nil {
+		log.Fatalf("Cannot create file in", dir, ". Check directory permission. Err", err)
+	}
+
+	defer file.Close()
+
+	content := `+++
+date = "%s"
+title = "%s"
+draft = true
+hidden = false
+
+tags = []
++++`
+	fmt.Fprintf(file, fmt.Sprintf(content, time.Now().Format(time.RFC3339), title))
+
+	return nil
 }

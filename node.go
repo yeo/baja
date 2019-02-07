@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -178,6 +179,8 @@ func (t *TreeNode) Compile() {
 		BuildIndex(dir, nodes, false)
 		allNodes = append(allNodes, nodes...)
 	}
+
+	sort.Slice(allNodes, func(i, j *Node) bool { return i.Meta.Date.After(j.Meta.Date) })
 
 	BuildIndex("", allNodes, true)
 }

@@ -16,37 +16,6 @@ import (
 	"strings"
 )
 
-type NodeParams struct{}
-
-type TreeNode struct {
-	Name  string
-	Leafs []TreeNode
-	Type  string
-}
-
-type NodeMeta struct {
-	Title         string
-	Draft         bool
-	Date          time.Time
-	DateFormatted string
-	Tags          []string
-	Category      string
-	Hidden        bool
-}
-
-type Node struct {
-	Meta *NodeMeta
-	Body template.HTML
-
-	Params *NodeParams
-
-	Raw           string
-	Path          string
-	BaseDirectory string
-	Name          string
-	templatePaths []string
-}
-
 func NewNode(path string) *Node {
 	n := Node{Path: path}
 	n.BaseDirectory = strings.Join(strings.Split(filepath.Dir(path), "/")[1:], "/")
@@ -55,6 +24,10 @@ func NewNode(path string) *Node {
 	n.Name = path[0:dotPosition]
 
 	return &n
+}
+
+func (n *Node) IsPage() bool {
+	return n.Meta.Type == "page"
 }
 
 func (n *Node) Permalink() string {
@@ -142,8 +115,6 @@ func (n *Node) Compile() {
 
 type visitor func(path string, f os.FileInfo, err error) error
 
-var NodeDB map[string][]*Node
-
 func visit(node *TreeNode) filepath.WalkFunc {
 	NodeDB = make(map[string][]*Node)
 
@@ -163,9 +134,8 @@ func visit(node *TreeNode) filepath.WalkFunc {
 		n.Parse()
 		n.FindTheme(DefaultConfig())
 		n.Compile()
-		if n.Meta.Hidden == false {
-			NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
-		}
+
+		NodeDB[n.BaseDirectory] = append(NodeDB[n.BaseDirectory], n)
 
 		return nil
 	}

@@ -1,10 +1,11 @@
-package baja
+package utils
 
-// https://gist.github.com/jaybill/2876519
-import "os"
-import "io"
-import "io/ioutil"
-import "log"
+import (
+	"io"
+	"io/ioutil"
+	"log"
+	"os"
+)
 
 // Copies file source to destination dest.
 func CopyFile(source string, dest string) (err error) {

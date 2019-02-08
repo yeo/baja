@@ -1,5 +1,10 @@
 package baja
 
+import (
+	"html/template"
+	"time"
+)
+
 type Site struct {
 	Name    string
 	Author  string
@@ -38,4 +43,3 @@ type Node struct {
 }
 
 var NodeDB map[string][]*Node
-var Nodes []*Node

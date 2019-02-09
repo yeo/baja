@@ -10,12 +10,15 @@ type Site struct {
 	Name    string
 	Author  string
 	BaseUrl string
+
+	Config *SiteConfig
 }
 
-type TreeNode struct {
-	Name  string
-	Leafs []TreeNode
-	Type  string
+type Current struct {
+	IsHome bool
+	IsDir  bool
+	IsTag  bool
+	IsList bool
 }
 
 type NodeMeta struct {

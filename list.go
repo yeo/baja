@@ -9,12 +9,13 @@ import (
 )
 
 type ListPage struct {
+	Current   *Current
 	Title     string
 	Permalink string
 	Nodes     []map[string]interface{}
 }
 
-func BuildIndex(dir string, nodes []*Node, home bool) {
+func BuildIndex(dir string, nodes []*Node, current *Current) {
 	if len(nodes) == 0 {
 		fmt.Println("targetDirectory", dir, "has no file. Skip")
 		return
@@ -38,6 +39,7 @@ func BuildIndex(dir string, nodes []*Node, home bool) {
 	}
 
 	data := ListPage{
+		current,
 		dir,
 		dir,
 		nodeData,
@@ -50,7 +52,7 @@ func BuildIndex(dir string, nodes []*Node, home bool) {
 		tpl, err = tpl.ParseFiles("themes/baja/" + dir + "/index.html")
 	}
 
-	if home == true {
+	if current.IsHome {
 		if _, err := os.Stat("themes/baja/home.html"); err == nil {
 			tpl, err = tpl.ParseFiles("themes/baja/home.html")
 		}

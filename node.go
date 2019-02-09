@@ -60,16 +60,14 @@ func (n *Node) IsPage() bool {
 
 func (n *Node) Permalink() string {
 	if n.BaseDirectory == "" {
-		return "/" + filepath.Base(n.Name)
+		return "/" + filepath.Base(n.Name) + "/"
 	} else {
-		return "/" + n.BaseDirectory + "/" + filepath.Base(n.Name)
+		return "/" + n.BaseDirectory + "/" + filepath.Base(n.Name) + "/"
 	}
 }
 
 func (n *Node) data() map[string]interface{} {
-	unsafe := blackfriday.Run([]byte(n.Body))
-	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
-	html := unsafe
+	html := blackfriday.Run([]byte(n.Body))
 
 	return map[string]interface{}{
 		"Meta":      n.Meta,
@@ -127,17 +125,35 @@ func CompileNodes(db *NodeDB) {
 		node.Compile()
 	}
 
-	// Now build the main index page
-	BuildIndex("", db.Publishable(), true)
+	current := &Current{
+		IsHome: false,
+		IsDir:  false,
+		IsTag:  false,
+	}
+	// Now build the main index pag
+	current.IsHome = true
+	BuildIndex("", db.Publishable(), current)
 
 	// Now build directory inde
 	for dir, nodes := range db.ByCategory() {
 		fmt.Println("Build category", dir)
-		BuildIndex(dir, nodes, false)
+		current := &Current{
+			IsHome: false,
+			IsDir:  true,
+			IsTag:  false,
+		}
+
+		BuildIndex(dir, nodes, current)
 	}
+
 	for tag, nodes := range db.ByTag() {
 		fmt.Println("Build tag", tag)
-		BuildIndex("tag/"+tag, nodes, false)
+		current := &Current{
+			IsHome: false,
+			IsDir:  false,
+			IsTag:  true,
+		}
+		BuildIndex("tag/"+tag, nodes, current)
 	}
 }
 

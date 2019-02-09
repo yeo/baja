@@ -7,8 +7,9 @@ import (
 )
 
 type SiteConfig struct {
-	Name   string `"yaml":name`
-	Author string `"yaml":author`
+	Name    string `"yaml":name`
+	Author  string `"yaml":author`
+	BaseURL string `"yaml":baseURL`
 }
 
 type Config struct {

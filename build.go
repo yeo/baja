@@ -47,7 +47,7 @@ func BuildDB(config *Config) *NodeDB {
 	db := &NodeDB{
 		NodeList: []*Node{},
 	}
-	color.Green("Scan ./content")
+	color.Green("Scan content")
 	_ = filepath.Walk("./content", visit(db))
 	return db
 }

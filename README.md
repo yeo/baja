@@ -46,4 +46,6 @@ unknow nowsaday and she eventually stop saying when she know more words
 
 But the word `baja` light up my days a lot.
 
+# Release
 
+- 2019/02/09: 0.0.2

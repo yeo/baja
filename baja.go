@@ -101,7 +101,7 @@ func (db *NodeDB) Publishable() []*Node {
 
 	for _, node := range db.NodeList {
 		if node.IsPage() || node.Meta.Draft {
-			color.Red("%s is page or draft. ignored\n", node.Name)
+			color.Red("[ignore]%s page/draft", node.Name)
 			continue
 		}
 

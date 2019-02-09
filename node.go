@@ -117,7 +117,7 @@ func (n *Node) Compile() {
 
 func CompileNodes(db *NodeDB) {
 	// Build individual node
-	color.Yellow("Start build html\nBuild individual page")
+	color.Yellow("Start build html\n  Build individual page")
 	for i, node := range db.NodeList {
 		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
 		node.Compile()
@@ -133,7 +133,7 @@ func CompileNodes(db *NodeDB) {
 	BuildIndex("", db.Publishable(), current)
 
 	// Now build directory inde
-	color.Cyan("Build category")
+	color.Cyan("  Build category")
 	for dir, nodes := range db.ByCategory() {
 		color.Cyan("\t√%s ", dir)
 		current := &Current{
@@ -145,7 +145,7 @@ func CompileNodes(db *NodeDB) {
 		BuildIndex(dir, nodes, current)
 	}
 
-	color.Cyan("Build tag")
+	color.Cyan("  Build tag")
 	for tag, nodes := range db.ByTag() {
 		color.Cyan("\t√%s ", tag)
 		current := &Current{

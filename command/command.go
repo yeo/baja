@@ -22,7 +22,7 @@ func Register(cmd string, runner CmdRunner) {
 }
 
 func Process(args []string) {
-	if len(args) == 0 {
+	if len(args) <= 1 {
 		fmt.Println("baja init name")
 		fmt.Println("baja node path/to/content")
 		os.Exit(1)

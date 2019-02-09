@@ -16,6 +16,7 @@ import (
 	"strings"
 )
 
+// NewNode creates a *Node object from a path
 func NewNode(path string) *Node {
 	n := Node{Path: path}
 
@@ -32,6 +33,7 @@ func NewNode(path string) *Node {
 	return &n
 }
 
+// Parse reads the markdown and parse metadata and generate html
 func (n *Node) Parse() {
 	content, err := ioutil.ReadFile(n.Path)
 	if err != nil {
@@ -126,7 +128,7 @@ func CompileNodes(db *NodeDB) {
 	}
 
 	// Now build the main index page
-	BuildIndex("", db.NodeList, true)
+	BuildIndex("", db.Publishable(), true)
 
 	// Now build directory inde
 	for dir, nodes := range db.ByCategory() {
@@ -153,7 +155,6 @@ func CreateNode(dir, title string) error {
 date = "%s"
 title = "%s"
 draft = true
-hidden = false
 
 tags = []
 +++`

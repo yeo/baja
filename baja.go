@@ -83,3 +83,17 @@ func (db *NodeDB) ByTag() map[string][]*Node {
 
 	return tagsNode
 }
+
+func (db *NodeDB) Publishable() []*Node {
+	nodes := make(map[string][]*Node)
+
+	for _, node := range db.NodeList {
+		if node.IsPage() || node.Meta.Draft == "false" {
+			continue
+		}
+
+		nodes = append(nodes, node)
+	}
+
+	return nodes
+}

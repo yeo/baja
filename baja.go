@@ -85,10 +85,10 @@ func (db *NodeDB) ByTag() map[string][]*Node {
 }
 
 func (db *NodeDB) Publishable() []*Node {
-	nodes := make(map[string][]*Node)
+	nodes := []*Node{}
 
 	for _, node := range db.NodeList {
-		if node.IsPage() || node.Meta.Draft == "false" {
+		if node.IsPage() == true || !node.Meta.Draft {
 			continue
 		}
 

@@ -1,6 +1,7 @@
 package baja
 
 import (
+	"fmt"
 	"html/template"
 	"time"
 )
@@ -88,7 +89,8 @@ func (db *NodeDB) Publishable() []*Node {
 	nodes := []*Node{}
 
 	for _, node := range db.NodeList {
-		if node.IsPage() == true || !node.Meta.Draft {
+		if node.IsPage() || node.Meta.Draft {
+			fmt.Printf("node %s is ignored because it's a draft or page %s %s\n", node.Name, node.Meta.Type, node.Meta.Draft)
 			continue
 		}
 

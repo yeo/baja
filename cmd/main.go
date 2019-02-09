@@ -10,7 +10,7 @@ var GitCommit string
 var AppVersion string
 
 func main() {
-	fmt.Sprintf("Baja %s %s\n\n", GitCommit, AppVersion)
+	fmt.Printf("Baja %s Reg %s\n\n", AppVersion, GitCommit)
 
 	command.Register("init", &command.InitCmd{})
 	command.Register("build", &command.BuildCmd{})

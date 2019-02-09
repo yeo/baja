@@ -3,17 +3,19 @@ package baja
 import (
 	"bufio"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	"time"
-	//"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"html/template"
+	"time"
 	//"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/BurntSushi/toml"
+	"github.com/fatih/color"
+	//"github.com/microcosm-cc/bluemonday"
 )
 
 // NewNode creates a *Node object from a path
@@ -91,8 +93,6 @@ func (n *Node) FindTheme(c *Config) {
 
 func (n *Node) Compile() {
 	directory := "public/" + n.BaseDirectory + "/" + n.Name
-	fmt.Println("Compile", n.Name, "in", directory)
-
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
 	if err != nil {
@@ -100,8 +100,6 @@ func (n *Node) Compile() {
 	}
 
 	w := bufio.NewWriter(f)
-
-	log.Println(n.templatePaths)
 
 	tpl := template.New("layout")
 
@@ -114,14 +112,14 @@ func (n *Node) Compile() {
 		log.Println("Fail to render", err)
 	}
 
-	fmt.Println("Write ", n.BaseDirectory, n.Name, "to", directory+"/index.html")
 	w.Flush()
 }
 
 func CompileNodes(db *NodeDB) {
 	// Build individual node
+	color.Yellow("Start build html\nBuild individual page")
 	for i, node := range db.NodeList {
-		fmt.Printf("Build progress %d/%d. File: %s\n", i+1, db.Total, node.Path)
+		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
 		node.Compile()
 	}
 
@@ -135,8 +133,9 @@ func CompileNodes(db *NodeDB) {
 	BuildIndex("", db.Publishable(), current)
 
 	// Now build directory inde
+	color.Cyan("Build category")
 	for dir, nodes := range db.ByCategory() {
-		fmt.Println("Build category", dir)
+		color.Cyan("\t√%s ", dir)
 		current := &Current{
 			IsHome: false,
 			IsDir:  true,
@@ -146,8 +145,9 @@ func CompileNodes(db *NodeDB) {
 		BuildIndex(dir, nodes, current)
 	}
 
+	color.Cyan("Build tag")
 	for tag, nodes := range db.ByTag() {
-		fmt.Println("Build tag", tag)
+		color.Cyan("\t√%s ", tag)
 		current := &Current{
 			IsHome: false,
 			IsDir:  false,
@@ -155,6 +155,7 @@ func CompileNodes(db *NodeDB) {
 		}
 		BuildIndex("tag/"+tag, nodes, current)
 	}
+	color.Green("Done! Enjoy")
 }
 
 func CreateNode(dir, title string) error {

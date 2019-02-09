@@ -1,10 +1,10 @@
 package baja
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/fatih/color"
 	"github.com/yeo/baja/utils"
 )
 
@@ -31,7 +31,7 @@ type visitor func(path string, f os.FileInfo, err error) error
 func visit(db *NodeDB) filepath.WalkFunc {
 
 	return func(path string, f os.FileInfo, err error) error {
-		fmt.Printf("Scan: %s\n", path)
+		color.Green("\t%s", path)
 
 		if f.IsDir() {
 			return nil
@@ -47,6 +47,7 @@ func BuildDB(config *Config) *NodeDB {
 	db := &NodeDB{
 		NodeList: []*Node{},
 	}
+	color.Green("Scan ./content")
 	_ = filepath.Walk("./content", visit(db))
 	return db
 }

@@ -15,6 +15,8 @@ github.com/derekparker/delve v1.1.0 h1:icd65nMp7s2HiLz6y/6RCVXBdoED3xxYLwX09EMaR
 github.com/derekparker/delve v1.1.0/go.mod h1:pMSZMfp0Nhbm8qdZJkuE/yPGOkLpGXLS1I4poXQpuJU=
 github.com/fatih/camelcase v1.0.0 h1:hxNvNX/xYBp0ovncs8WyWZrOrpBNub/JfaMvbURyft8=
 github.com/fatih/camelcase v1.0.0/go.mod h1:yN2Sb0lFhZJUdVvtELVWefmrXpuZESvPmqwoZc+/fpc=
+github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
+github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/gomodifytags v0.0.0-20180914191908-141225bf62b6 h1:iXJdM8Uob6EPOG/PFr5q0J124ysiZdJfACHqICBb3b8=
 github.com/fatih/gomodifytags v0.0.0-20180914191908-141225bf62b6/go.mod h1:p2/x7bnOQsbq/deXsDIlj2yLiKFGPkD2nuoYqwn8R4Y=
 github.com/fatih/motion v0.0.0-20180408211639-218875ebe238 h1:Qo4RxRMFag+fvDqQ6A3MblYBormptQUZ1ssOtV+EeQ8=

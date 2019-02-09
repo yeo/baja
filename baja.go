@@ -1,9 +1,10 @@
 package baja
 
 import (
-	"fmt"
 	"html/template"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Site struct {
@@ -40,6 +41,13 @@ type Node struct {
 	Path          string
 	BaseDirectory string // the directory without /content part
 	templatePaths []string
+}
+
+type ListPage struct {
+	Current   *Current
+	Title     string
+	Permalink string
+	Nodes     []map[string]interface{}
 }
 
 type NodeDB struct {
@@ -93,7 +101,7 @@ func (db *NodeDB) Publishable() []*Node {
 
 	for _, node := range db.NodeList {
 		if node.IsPage() || node.Meta.Draft {
-			fmt.Printf("node %s is ignored because it's a draft or page %s %s\n", node.Name, node.Meta.Type, node.Meta.Draft)
+			color.Red("%s is page or draft. ignored\n", node.Name)
 			continue
 		}
 

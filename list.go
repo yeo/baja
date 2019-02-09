@@ -8,13 +8,6 @@ import (
 	"sort"
 )
 
-type ListPage struct {
-	Current   *Current
-	Title     string
-	Permalink string
-	Nodes     []map[string]interface{}
-}
-
 func BuildIndex(dir string, nodes []*Node, current *Current) {
 	if len(nodes) == 0 {
 		fmt.Println("targetDirectory", dir, "has no file. Skip")

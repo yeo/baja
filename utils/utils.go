@@ -34,8 +34,6 @@ func CopyFile(source string, dest string) (err error) {
 // Recursively copies a directory tree, attempting to preserve permissions.
 // Source directory must exist, destination directory must *not* exist.
 func CopyDir(source string, dest string) (err error) {
-	log.Println("Copy", source, "to", dest)
-
 	// get properties of source dir
 	fi, err := os.Stat(source)
 	if err != nil {
@@ -50,12 +48,7 @@ func CopyDir(source string, dest string) (err error) {
 	// ensure dest dir does not already exist
 
 	_, err = os.Open(dest)
-	if !os.IsNotExist(err) {
-		log.Println("Dest", dest, "alredt exist, not create")
-	} else {
-
-		// create dest dir
-
+	if os.IsNotExist(err) {
 		err = os.MkdirAll(dest, fi.Mode())
 		if err != nil {
 			return err
@@ -64,7 +57,7 @@ func CopyDir(source string, dest string) (err error) {
 
 	entries, err := ioutil.ReadDir(source)
 	if err != nil {
-		log.Println("Cannot copy", err)
+		log.Fatal("Cannot copy", err)
 	}
 
 	for _, entry := range entries {

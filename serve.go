@@ -1,7 +1,9 @@
 package baja
 
 import (
+	"github.com/fsnotify/fsnotify"
 	"github.com/labstack/echo"
+	"log"
 )
 
 type Server struct {
@@ -26,6 +28,38 @@ func Run(addr, public string) {
 func Serve(addr, directory string) int {
 	//watcher := NewWatcher(cwd)
 	//go watcher.Run()
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatalf("Cannot watch directory")
+	}
+	defer watcher.Close()
+
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				log.Println("event:", event)
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					log.Println("modified file:", event.Name)
+				}
+				Build()
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+
+	err = watcher.Add("./content")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	Run(addr, directory)
 	return 0
 }

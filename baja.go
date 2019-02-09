@@ -11,8 +11,6 @@ type Site struct {
 	BaseUrl string
 }
 
-type NodeParams struct{}
-
 type TreeNode struct {
 	Name  string
 	Leafs []TreeNode
@@ -32,14 +30,25 @@ type NodeMeta struct {
 type Node struct {
 	Meta *NodeMeta
 	Body template.HTML
-	Name string
-
-	Params *NodeParams
+	Name string // the filename without extension
 
 	Raw           string
 	Path          string
-	BaseDirectory string
+	BaseDirectory string // the directory without /content part
 	templatePaths []string
 }
 
-var NodeDB map[string][]*Node
+type NodeDB struct {
+	NodeList      []*Node
+	DirectoryList []string
+	Total         int
+}
+
+func (db *NodeDB) AddDirectory(dir string) {
+	db.DirectoryList = append(db.DirectoryList, dir)
+}
+
+func (db *NodeDB) Append(n *Node) {
+	db.NodeList = append(db.NodeList, n)
+	db.Total = len(db.NodeList)
+}

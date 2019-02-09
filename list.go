@@ -2,30 +2,29 @@ package baja
 
 import (
 	"bufio"
+	"fmt"
 	"html/template"
-	"log"
 	"os"
 	"sort"
 )
 
 func BuildIndex(dir string, nodes []*Node, home bool) {
-	directory := "public/" + dir
-
-	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Meta.Date.After(nodes[j].Meta.Date) })
-
 	if len(nodes) == 0 {
-		log.Println("Directory", dir, "has no file. Skip")
+		fmt.Println("targetDirectory", dir, "has no file. Skip")
 		return
 	}
 
-	os.MkdirAll(directory, os.ModePerm)
-	f, err := os.Create(directory + "/index.html")
+	targetDirectory := "public/" + dir
+	os.MkdirAll(targetDirectory, os.ModePerm)
+
+	f, err := os.Create(targetDirectory + "/index.html")
 	if err != nil {
-		log.Println("Cannot write to file", err, directory)
+		fmt.Println("Cannot create index.html in", targetDirectory, ". error", err)
 	}
 
 	w := bufio.NewWriter(f)
 
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Meta.Date.After(nodes[j].Meta.Date) })
 	nodeData := make([]map[string]interface{}, len(nodes))
 
 	for i, n := range nodes {
@@ -56,7 +55,7 @@ func BuildIndex(dir string, nodes []*Node, home bool) {
 	}
 
 	if err := tpl.Execute(w, data); err != nil {
-		log.Println("Fail to render", err)
+		fmt.Println("Fail to render", err)
 	}
 	w.Flush()
 }

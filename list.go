@@ -52,7 +52,7 @@ func BuildIndex(dir string, nodes []*Node, current *Current) {
 	}
 
 	if err := tpl.Execute(w, data); err != nil {
-		fmt.Println("Fail to render", err)
+		fmt.Println("Fail to render. Check your template for syntax, wrong tag", err)
 	}
 	w.Flush()
 }

@@ -1,9 +1,10 @@
 package baja
 
 import (
+	"log"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/labstack/echo"
-	"log"
 )
 
 type Server struct {
@@ -26,13 +27,14 @@ func Run(addr, public string) {
 
 // Build execute template and content to generate our real static conent
 func Serve(addr, directory string) int {
-	//watcher := NewWatcher(cwd)
-	//go watcher.Run()
-	watcher, err := fsnotify.NewWatcher()
+	watcher, err := Watch("./content")
 	if err != nil {
 		log.Fatalf("Cannot watch directory")
 	}
 	defer watcher.Close()
+
+	// Build our site immediately to serve dev
+	go Build()
 
 	go func() {
 		for {
@@ -55,7 +57,6 @@ func Serve(addr, directory string) int {
 		}
 	}()
 
-	err = watcher.Add("./content")
 	if err != nil {
 		log.Fatal(err)
 	}

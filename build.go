@@ -21,8 +21,7 @@ func Build() int {
 
 func CompileAsset(config *Config) {
 	// This should go into a site/path helper
-	utils.CopyDir("themes/"+config.Theme+"/static/css", "public/css")
-	utils.CopyDir("themes/"+config.Theme+"/static/js", "public/js")
+	utils.CopyDir("themes/"+config.Theme+"/static/", "public/")
 	utils.CopyDir("static", "public")
 }
 

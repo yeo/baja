@@ -6,8 +6,10 @@ import (
 	"os"
 )
 
-var GitCommit string
-var AppVersion string
+var (
+	GitCommit  string
+	AppVersion string
+)
 
 func main() {
 	fmt.Printf("Baja %s Reg %s\n\n", AppVersion, GitCommit)
@@ -17,5 +19,6 @@ func main() {
 	command.Register("clean", &command.CleanCmd{})
 	command.Register("serve", &command.ServeCmd{})
 	command.Register("new", &command.CreateCmd{})
+
 	command.Process(os.Args)
 }

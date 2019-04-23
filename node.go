@@ -124,9 +124,10 @@ func CompileNodes(db *NodeDB) {
 	}
 
 	current := &Current{
-		IsHome: false,
-		IsDir:  false,
-		IsTag:  false,
+		IsHome:     false,
+		IsDir:      false,
+		IsTag:      false,
+		CompiledAt: time.Now(),
 	}
 	// Now build the main index pag
 	current.IsHome = true
@@ -137,9 +138,10 @@ func CompileNodes(db *NodeDB) {
 	for dir, nodes := range db.ByCategory() {
 		color.Cyan("\t√%s ", dir)
 		current := &Current{
-			IsHome: false,
-			IsDir:  true,
-			IsTag:  false,
+			IsHome:     false,
+			IsDir:      true,
+			IsTag:      false,
+			CompiledAt: time.Now(),
 		}
 
 		BuildIndex(dir, nodes, current)
@@ -149,9 +151,10 @@ func CompileNodes(db *NodeDB) {
 	for tag, nodes := range db.ByTag() {
 		color.Cyan("\t√%s ", tag)
 		current := &Current{
-			IsHome: false,
-			IsDir:  false,
-			IsTag:  true,
+			IsHome:     false,
+			IsDir:      false,
+			IsTag:      true,
+			CompiledAt: time.Now(),
 		}
 		BuildIndex("tag/"+tag, nodes, current)
 	}

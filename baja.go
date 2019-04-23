@@ -20,6 +20,8 @@ type Current struct {
 	IsDir  bool
 	IsTag  bool
 	IsList bool
+
+	CompiledAt time.Time
 }
 
 type NodeMeta struct {

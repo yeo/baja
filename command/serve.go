@@ -12,7 +12,7 @@ func (c *ServeCmd) Run(args []string) int {
 	fmt.Println("Run server")
 
 	addr := "0.0.0.0"
-	if args[0] != nil {
+	if args != nil && args[0] != "" {
 		addr = args[0]
 	}
 	return baja.Serve(fmt.Sprintf("%s:2803", addr), "./public")

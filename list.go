@@ -9,6 +9,8 @@ import (
 )
 
 func BuildIndex(dir string, nodes []*Node, current *Current) {
+	config := DefaultConfig()
+
 	if len(nodes) == 0 {
 		fmt.Println("targetDirectory", dir, "has no file. Skip")
 		return
@@ -38,16 +40,18 @@ func BuildIndex(dir string, nodes []*Node, current *Current) {
 		nodeData,
 	}
 
-	tpl, err := template.New("layout").ParseFiles("themes/baja/layout/default.html")
-	tpl, err = tpl.ParseFiles("themes/baja/index.html")
+	themePath := "themes/" + config.Theme + "/"
 
-	if _, err := os.Stat("themes/baja/" + dir + "/index.html"); err == nil {
-		tpl, err = tpl.ParseFiles("themes/baja/" + dir + "/index.html")
+	tpl, err := template.New("layout").ParseFiles(themePath + "layout/default.html")
+	tpl, err = tpl.ParseFiles(themePath + "index.html")
+
+	if _, err := os.Stat(themePath + dir + "/index.html"); err == nil {
+		tpl, err = tpl.ParseFiles(themePath + dir + "/index.html")
 	}
 
 	if current.IsHome {
-		if _, err := os.Stat("themes/baja/home.html"); err == nil {
-			tpl, err = tpl.ParseFiles("themes/baja/home.html")
+		if _, err := os.Stat(themePath + "/home.html"); err == nil {
+			tpl, err = tpl.ParseFiles(themePath + "/home.html")
 		}
 	}
 

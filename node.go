@@ -92,6 +92,9 @@ func (n *Node) FindTheme(c *Config) {
 }
 
 func (n *Node) Compile() {
+	config := DefaultConfig()
+	themePath := "themes/" + config.Theme + "/"
+
 	directory := "public/" + n.BaseDirectory + "/" + n.Name
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
@@ -103,7 +106,7 @@ func (n *Node) Compile() {
 
 	tpl := template.New("layout")
 
-	tpl, err = tpl.ParseFiles("themes/baja/layout/default.html", "themes/baja/node.html")
+	tpl, err = tpl.ParseFiles(themePath+"layout/default.html", themePath+"node.html")
 	if err != nil {
 		log.Panic(err)
 	}

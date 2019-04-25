@@ -18,16 +18,24 @@ type Config struct {
 	path  string
 }
 
+var (
+	config *Config
+)
+
 func DefaultConfig() *Config {
+	if config != nil {
+		return config
+	}
+
 	data, err := ioutil.ReadFile("./baja.yaml")
 	if err != nil {
 		log.Fatalf("Cannot read config file %v. Did you forget to run init?", err)
 	}
 
-	c := Config{path: "./baja.yaml"}
-	err = yaml.Unmarshal(data, &c)
+	config := Config{path: "./baja.yaml"}
+	err = yaml.Unmarshal(data, &config)
 
-	return &c
+	return &config
 }
 
 func NewConfig(path string) *Config {

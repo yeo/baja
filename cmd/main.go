@@ -12,13 +12,13 @@ var (
 )
 
 func main() {
-	fmt.Printf("Baja %s Reg %s\n\n", AppVersion, GitCommit)
+	fmt.Printf("Baja %s.%s\n\n", AppVersion, GitCommit)
 
-	command.Register("init", &command.InitCmd{})
-	command.Register("build", &command.BuildCmd{})
-	command.Register("clean", &command.CleanCmd{})
-	command.Register("serve", &command.ServeCmd{})
-	command.Register("new", &command.CreateCmd{})
+	command.Register(&command.InitCmd{})
+	command.Register(&command.BuildCmd{})
+	command.Register(&command.CleanCmd{})
+	command.Register(&command.ServeCmd{})
+	command.Register(&command.CreateCmd{})
 
 	command.Process(os.Args)
 }

@@ -3,6 +3,7 @@ package baja
 import (
 	"log"
 
+	"github.com/fatih/color"
 	"github.com/fsnotify/fsnotify"
 	"github.com/labstack/echo"
 )
@@ -43,16 +44,16 @@ func Serve(addr, directory string) int {
 				if !ok {
 					return
 				}
-				log.Println("event:", event)
+				color.Yellow("Receive file change event %s", event)
 				if event.Op&fsnotify.Write == fsnotify.Write {
-					log.Println("modified file:", event.Name)
+					color.Yellow("  modified file:", event.Name)
 				}
 				Build()
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
-				log.Println("error:", err)
+				color.Red("Watch error:%s", err)
 			}
 		}
 	}()

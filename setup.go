@@ -3,7 +3,6 @@ package baja
 import (
 	"os"
 	"path/filepath"
-	//"github.com/yeo/baja/command"
 )
 
 // Initalize a new blog directory

@@ -9,7 +9,7 @@ import (
 )
 
 func BuildIndex(dir string, nodes []*Node, current *Current) {
-	config := DefaultConfig()
+	theme := GetTheme(DefaultConfig())
 
 	if len(nodes) == 0 {
 		fmt.Println("targetDirectory", dir, "has no file. Skip")
@@ -40,19 +40,22 @@ func BuildIndex(dir string, nodes []*Node, current *Current) {
 		nodeData,
 	}
 
-	themePath := "themes/" + config.Theme + "/"
+	tpl, err := template.New("layout").ParseFiles(theme.LayoutPath("default"))
+	tpl, err = tpl.ParseFiles(theme.NodePath("index"))
 
-	tpl, err := template.New("layout").ParseFiles(themePath + "layout/default.html")
-	tpl, err = tpl.ParseFiles(themePath + "index.html")
-
-	if _, err := os.Stat(themePath + dir + "/index.html"); err == nil {
-		tpl, err = tpl.ParseFiles(themePath + dir + "/index.html")
+	if _, err := os.Stat(theme.Path() + dir + "/index.html"); err == nil {
+		tpl, err = tpl.ParseFiles(theme.Path() + dir + "/index.html")
 	}
 
 	if current.IsHome {
-		if _, err := os.Stat(themePath + "/home.html"); err == nil {
-			tpl, err = tpl.ParseFiles(themePath + "/home.html")
+		if _, err := os.Stat(theme.NodePath("home")); err == nil {
+			tpl, err = tpl.ParseFiles(theme.NodePath("home"))
 		}
+	}
+
+	if tpl == nil {
+		fmt.Println("Cannot create template render")
+		return
 	}
 
 	if err := tpl.Execute(w, data); err != nil {

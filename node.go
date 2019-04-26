@@ -92,8 +92,7 @@ func (n *Node) FindTheme(c *Config) {
 }
 
 func (n *Node) Compile() {
-	config := DefaultConfig()
-	themePath := "themes/" + config.Theme + "/"
+	theme := GetTheme(DefaultConfig())
 
 	directory := "public/" + n.BaseDirectory + "/" + n.Name
 	os.MkdirAll(directory, os.ModePerm)
@@ -106,7 +105,7 @@ func (n *Node) Compile() {
 
 	tpl := template.New("layout")
 
-	tpl, err = tpl.ParseFiles(themePath+"layout/default.html", themePath+"node.html")
+	tpl, err = tpl.ParseFiles(theme.LayoutPath("default"), theme.NodePath("node"))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -139,7 +138,7 @@ func CompileNodes(db *NodeDB) {
 	// Now build directory inde
 	color.Cyan("  Build category")
 	for dir, nodes := range db.ByCategory() {
-		color.Cyan("\t√%s ", dir)
+		color.Cyan("    %s ", dir)
 		current := &Current{
 			IsHome:     false,
 			IsDir:      true,
@@ -152,7 +151,7 @@ func CompileNodes(db *NodeDB) {
 
 	color.Cyan("  Build tag")
 	for tag, nodes := range db.ByTag() {
-		color.Cyan("\t√%s ", tag)
+		color.Cyan("    %s ", tag)
 		current := &Current{
 			IsHome:     false,
 			IsDir:      false,

@@ -8,21 +8,46 @@ import (
 	"github.com/yeo/baja/utils"
 )
 
-// Build execute template and content to generate our real static conent
+// Build executes template and content to generate our real static conent
 func Build() int {
 	config := DefaultConfig()
 
+	os.RemoveAll("./public")
+	CompileAsset(config)
+
 	db := BuildDB(config)
 	CompileNodes(db)
-	CompileAsset(config)
 
 	return 0
 }
 
+// CompileAsset copy asset from theme or static into public and also generate a hash version of those file
 func CompileAsset(config *Config) {
-	// This should go into a site/path helper
-	utils.CopyDir("themes/"+config.Theme+"/static/", "public/")
+	theme := GetTheme(config)
+	utils.CopyDir(theme.SubPath("static/"), "public")
 	utils.CopyDir("static", "public")
+
+	// Now generate hash
+	err := filepath.Walk("./public", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			color.Red("Error while access %q: %v\n", path, err)
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		color.Green("Generate hash for %s", path)
+		utils.CopyFileWithHash(path)
+
+		return nil
+	})
+
+	if err != nil {
+		color.Red("error compile asser%v", err)
+		return
+	}
 }
 
 type visitor func(path string, f os.FileInfo, err error) error

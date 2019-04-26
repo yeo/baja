@@ -1,11 +1,34 @@
 package utils
 
 import (
+	"crypto/md5"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
+
+func CopyFileWithHash(path string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return err
+	}
+
+	hash := fmt.Sprintf("%x", h.Sum(nil))
+	//TODO: naieve, will break if file name has no . and other upper directory has .
+	fileExtPos := strings.LastIndex(path, ".")
+	pathWithHash := path[0:fileExtPos] + "-" + hash + path[fileExtPos:]
+
+	return CopyFile(path, pathWithHash)
+}
 
 // Copies file source to destination dest.
 func CopyFile(source string, dest string) (err error) {

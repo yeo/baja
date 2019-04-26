@@ -7,6 +7,7 @@ import (
 	"github.com/fatih/color"
 )
 
+// Site stores information of this static site and various meta data
 type Site struct {
 	Name    string
 	Author  string
@@ -15,6 +16,7 @@ type Site struct {
 	Config *SiteConfig
 }
 
+// Current is a struct about various current state we pass to template to help us do some business logic depend on a context
 type Current struct {
 	IsHome bool
 	IsDir  bool
@@ -24,6 +26,7 @@ type Current struct {
 	CompiledAt time.Time
 }
 
+// NodeMeta is meta data of a node, usually map directly to node toml metadata section
 type NodeMeta struct {
 	Title         string
 	Draft         bool
@@ -34,6 +37,7 @@ type NodeMeta struct {
 	Type          string
 }
 
+// Node hold information of a specifc page we are rendering
 type Node struct {
 	Meta *NodeMeta
 	Body template.HTML
@@ -45,6 +49,7 @@ type Node struct {
 	templatePaths []string
 }
 
+// ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category
 type ListPage struct {
 	Current   *Current
 	Title     string
@@ -52,6 +57,7 @@ type ListPage struct {
 	Nodes     []map[string]interface{}
 }
 
+// NodeDB is the in-memory database of all the page
 type NodeDB struct {
 	NodeList      []*Node
 	DirectoryList []string
@@ -63,6 +69,7 @@ func (db *NodeDB) Append(n *Node) {
 	db.Total = len(db.NodeList)
 }
 
+// ByTag category groups node by category(category is the directoy name)
 func (db *NodeDB) ByCategory() map[string][]*Node {
 	categoryNodes := make(map[string][]*Node)
 
@@ -81,6 +88,7 @@ func (db *NodeDB) ByCategory() map[string][]*Node {
 	return categoryNodes
 }
 
+// ByTag groups node by tag
 func (db *NodeDB) ByTag() map[string][]*Node {
 	tagsNode := make(map[string][]*Node)
 	for _, node := range db.NodeList {
@@ -98,6 +106,7 @@ func (db *NodeDB) ByTag() map[string][]*Node {
 	return tagsNode
 }
 
+// Publishable returns a list of node that can be publish, as in non-draft mode or non page
 func (db *NodeDB) Publishable() []*Node {
 	nodes := []*Node{}
 

@@ -1,5 +1,10 @@
 package baja
 
+import (
+	"os"
+	"strings"
+)
+
 type Theme struct {
 	Name string
 	path string
@@ -24,4 +29,21 @@ func (t *Theme) NodePath(node string) string {
 
 func (t *Theme) Path() string {
 	return t.path
+}
+
+func (t *Theme) SubPath(subpath string) string {
+	return t.path + subpath
+}
+
+func (t *Theme) FindTheme(n *Node) {
+	// Find theme
+	pathComponents := strings.Split(n.BaseDirectory, "/")
+	n.templatePaths = []string{t.LayoutPath("default")}
+	lookupPath := t.Path()
+	for _, p := range pathComponents {
+		if _, err := os.Stat(lookupPath + "/node.html"); err == nil {
+			n.templatePaths = append(n.templatePaths, lookupPath+"/node.html")
+		}
+		lookupPath = lookupPath + "/" + p
+	}
 }

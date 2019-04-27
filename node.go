@@ -103,7 +103,7 @@ func (n *Node) Compile() {
 
 	w := bufio.NewWriter(f)
 
-	tpl := template.New("layout")
+	tpl := template.New("layout").Funcs(FuncMaps())
 
 	tpl, err = tpl.ParseFiles(theme.LayoutPath("default"), theme.NodePath("node"))
 	if err != nil {

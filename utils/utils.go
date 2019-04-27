@@ -10,6 +10,25 @@ import (
 	"strings"
 )
 
+func GenerateAssetHash(path string) (string, error) {
+	f, err := os.Open("./public/" + path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	hash := fmt.Sprintf("%x", h.Sum(nil))
+	fileExtPos := strings.LastIndex(path, ".")
+	pathWithHash := path[0:fileExtPos] + "-" + hash + path[fileExtPos:]
+
+	return pathWithHash, nil
+}
+
 func CopyFileWithHash(path string) error {
 	f, err := os.Open(path)
 	if err != nil {

@@ -1,8 +1,11 @@
 package baja
 
 import (
+	"html/template"
 	"os"
 	"strings"
+
+	"github.com/yeo/baja/utils"
 )
 
 type Theme struct {
@@ -46,4 +49,12 @@ func (t *Theme) FindTheme(n *Node) {
 		}
 		lookupPath = lookupPath + "/" + p
 	}
+}
+
+func FuncMaps() template.FuncMap {
+	funcMap := template.FuncMap{
+		"asset": utils.GenerateAssetHash,
+	}
+
+	return funcMap
 }

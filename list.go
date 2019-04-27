@@ -40,7 +40,7 @@ func BuildIndex(dir string, nodes []*Node, current *Current) {
 		nodeData,
 	}
 
-	tpl, err := template.New("layout").ParseFiles(theme.LayoutPath("default"))
+	tpl, err := template.New("layout").Funcs(FuncMaps()).ParseFiles(theme.LayoutPath("default"))
 	tpl, err = tpl.ParseFiles(theme.NodePath("index"))
 
 	if _, err := os.Stat(theme.Path() + dir + "/index.html"); err == nil {

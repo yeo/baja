@@ -11,11 +11,6 @@ import (
 func BuildIndex(dir string, nodes []*Node, current *Current) {
 	theme := GetTheme(DefaultConfig())
 
-	if len(nodes) == 0 {
-		fmt.Println("targetDirectory", dir, "has no file. Skip")
-		return
-	}
-
 	targetDirectory := "public/" + dir
 	os.MkdirAll(targetDirectory, os.ModePerm)
 

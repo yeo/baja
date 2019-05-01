@@ -24,4 +24,7 @@ var _ = Describe("Setup", func() {
 
 		os.RemoveAll(name)
 	})
+
+	It("Copy default theme", func() {
+	})
 })

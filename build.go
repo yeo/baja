@@ -4,6 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"html/template"
+	"strings"
+	"time"
+
 	"os"
 	"path/filepath"
 	"sort"
@@ -129,4 +132,73 @@ func BuildIndex(dir string, nodes []*Node, current *Current) {
 		fmt.Println("Fail to render. Check your template for syntax, wrong tag", err)
 	}
 	w.Flush()
+}
+
+func CompileNodes(db *NodeDB) {
+	// Build individual node
+	color.Yellow("Start build html\n  Build individual page")
+	for i, node := range db.NodeList {
+		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
+		node.Compile()
+	}
+
+	current := &Current{
+		IsHome:     false,
+		IsDir:      false,
+		IsTag:      false,
+		CompiledAt: time.Now(),
+	}
+	// Now build the main index pag
+	current.IsHome = true
+	BuildIndex("", db.Publishable(), current)
+
+	// Now build directory inde
+	color.Cyan("  Build category")
+	for dir, nodes := range db.ByCategory() {
+		color.Cyan("    %s ", dir)
+		current := &Current{
+			IsHome:     false,
+			IsDir:      true,
+			IsTag:      false,
+			CompiledAt: time.Now(),
+		}
+
+		BuildIndex(dir, nodes, current)
+	}
+
+	color.Cyan("  Build tag")
+	for tag, nodes := range db.ByTag() {
+		color.Cyan("    %s ", tag)
+		current := &Current{
+			IsHome:     false,
+			IsDir:      false,
+			IsTag:      true,
+			CompiledAt: time.Now(),
+		}
+		BuildIndex("tag/"+tag, nodes, current)
+	}
+	color.Green("Done! Enjoy")
+}
+
+func CreateNode(dir, title string) error {
+	slug := strings.Replace(title, " ", "-", -1)
+
+	file, err := os.Create("content/" + dir + "/" + slug + ".md")
+	if err != nil {
+		color.Red("Cannot create file in %s. Check directory permission. Err: err", dir, err)
+		return err
+	}
+
+	defer file.Close()
+
+	content := `+++
+date = "%s"
+title = "%s"
+draft = true
+
+tags = []
++++`
+	fmt.Fprintf(file, fmt.Sprintf(content, time.Now().Format(time.RFC3339), title))
+
+	return nil
 }

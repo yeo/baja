@@ -27,8 +27,8 @@ require (
 	github.com/mdempsky/gocode v0.0.0-20181226182234-be056ad32a5e // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/nicksnyder/go-i18n v1.10.0 // indirect
-	github.com/onsi/ginkgo v1.8.0 // indirect
-	github.com/onsi/gomega v1.5.0 // indirect
+	github.com/onsi/ginkgo v1.8.0
+	github.com/onsi/gomega v1.5.0
 	github.com/pelletier/go-toml v1.2.0 // indirect
 	github.com/peterh/liner v1.1.0 // indirect
 	github.com/rogpeppe/godef v1.1.1 // indirect

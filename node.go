@@ -168,7 +168,8 @@ func CreateNode(dir, title string) error {
 
 	file, err := os.Create("content/" + dir + "/" + slug + ".md")
 	if err != nil {
-		log.Fatalf("Cannot create file in", dir, ". Check directory permission. Err", err)
+		color.Red("Cannot create file in %s. Check directory permission. Err: err", dir, err)
+		return err
 	}
 
 	defer file.Close()

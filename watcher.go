@@ -1,28 +1,21 @@
 package baja
 
 import (
-	"os"
-	"path/filepath"
-
-	"github.com/fsnotify/fsnotify"
+	"github.com/fatih/color"
+	"github.com/radovskyb/watcher"
 )
 
-func Watch(dir string) (*fsnotify.Watcher, error) {
-	w, err := fsnotify.NewWatcher()
+func Watch(dir []string) *watcher.Watcher {
+	w := watcher.New()
 
-	if err != nil {
-		return nil, err
+	w.SetMaxEvents(1)
+
+	for _, d := range dir {
+		color.Yellow("Watch to build %s", d)
+		if err := w.AddRecursive(d); err != nil {
+			color.Red("Cannot watch %v", err)
+		}
 	}
 
-	err = w.Add(dir)
-
-	_ = filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-		if f.IsDir() {
-			w.Add(path)
-		}
-
-		return nil
-	})
-
-	return w, nil
+	return w
 }

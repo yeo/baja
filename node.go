@@ -2,10 +2,7 @@ package baja
 
 import (
 	"bufio"
-	"fmt"
-	"github.com/russross/blackfriday"
 	"html/template"
-	"time"
 	//"io"
 	"io/ioutil"
 	"log"
@@ -14,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/fatih/color"
+	"github.com/russross/blackfriday"
 	//"github.com/microcosm-cc/bluemonday"
 )
 
@@ -115,72 +112,4 @@ func (n *Node) Compile() {
 	}
 
 	w.Flush()
-}
-
-func CompileNodes(db *NodeDB) {
-	// Build individual node
-	color.Yellow("Start build html\n  Build individual page")
-	for i, node := range db.NodeList {
-		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
-		node.Compile()
-	}
-
-	current := &Current{
-		IsHome:     false,
-		IsDir:      false,
-		IsTag:      false,
-		CompiledAt: time.Now(),
-	}
-	// Now build the main index pag
-	current.IsHome = true
-	BuildIndex("", db.Publishable(), current)
-
-	// Now build directory inde
-	color.Cyan("  Build category")
-	for dir, nodes := range db.ByCategory() {
-		color.Cyan("    %s ", dir)
-		current := &Current{
-			IsHome:     false,
-			IsDir:      true,
-			IsTag:      false,
-			CompiledAt: time.Now(),
-		}
-
-		BuildIndex(dir, nodes, current)
-	}
-
-	color.Cyan("  Build tag")
-	for tag, nodes := range db.ByTag() {
-		color.Cyan("    %s ", tag)
-		current := &Current{
-			IsHome:     false,
-			IsDir:      false,
-			IsTag:      true,
-			CompiledAt: time.Now(),
-		}
-		BuildIndex("tag/"+tag, nodes, current)
-	}
-	color.Green("Done! Enjoy")
-}
-
-func CreateNode(dir, title string) error {
-	slug := strings.Replace(title, " ", "-", -1)
-
-	file, err := os.Create("content/" + dir + "/" + slug + ".md")
-	if err != nil {
-		log.Fatalf("Cannot create file in", dir, ". Check directory permission. Err", err)
-	}
-
-	defer file.Close()
-
-	content := `+++
-date = "%s"
-title = "%s"
-draft = true
-
-tags = []
-+++`
-	fmt.Fprintf(file, fmt.Sprintf(content, time.Now().Format(time.RFC3339), title))
-
-	return nil
 }

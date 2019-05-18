@@ -2,9 +2,9 @@ package baja
 
 import (
 	"log"
+	"time"
 
 	"github.com/fatih/color"
-	"github.com/fsnotify/fsnotify"
 	"github.com/labstack/echo"
 )
 
@@ -28,11 +28,7 @@ func Run(addr, public string) {
 
 // Build execute template and content to generate our real static conent
 func Serve(addr, directory string) int {
-	watcher, err := Watch("./content")
-	if err != nil {
-		log.Fatalf("Cannot watch directory")
-	}
-	defer watcher.Close()
+	w := Watch([]string{"./content", "./themes"})
 
 	// Build our site immediately to serve dev
 	go Build()
@@ -40,27 +36,23 @@ func Serve(addr, directory string) int {
 	go func() {
 		for {
 			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				}
-				color.Yellow("Receive file change event %s", event)
-				if event.Op&fsnotify.Write == fsnotify.Write {
-					color.Yellow("  modified file:", event.Name)
-				}
+			case event := <-w.Event:
+				color.Yellow("Receive file change event %s. Rebuild", event)
 				Build()
-			case err, ok := <-watcher.Errors:
-				if !ok {
-					return
-				}
+			case err := <-w.Error:
 				color.Red("Watch error:%s", err)
+			case <-w.Closed:
+				return
 			}
 		}
 	}()
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		// Start the watching process - it'll check for changes every 100ms.
+		if err := w.Start(time.Millisecond * 100); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	Run(addr, directory)
 	return 0

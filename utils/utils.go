@@ -10,6 +10,11 @@ import (
 	"strings"
 )
 
+func HasFile(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
 func GenerateAssetHash(path string) (string, error) {
 	f, err := os.Open("./public/" + path)
 	if err != nil {

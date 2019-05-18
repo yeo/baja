@@ -31,6 +31,7 @@ require (
 	github.com/onsi/gomega v1.5.0
 	github.com/pelletier/go-toml v1.2.0 // indirect
 	github.com/peterh/liner v1.1.0 // indirect
+	github.com/radovskyb/watcher v1.0.6
 	github.com/rogpeppe/godef v1.1.1 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect

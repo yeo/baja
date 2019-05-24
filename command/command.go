@@ -41,7 +41,7 @@ func printHelp() {
 func Process(args []string) {
 	if len(args) <= 1 {
 		printHelp()
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	command := args[1]

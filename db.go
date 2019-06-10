@@ -16,6 +16,7 @@ type NodeMeta struct {
 	Tags          []string
 	Category      string
 	Type          string
+	Theme         string
 }
 
 // Node hold information of a specifc page we are rendering

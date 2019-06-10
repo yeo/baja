@@ -17,5 +17,7 @@ func Watch(dir []string) *watcher.Watcher {
 		}
 	}
 
+	w.Ignore("./themes/opty/node_modules")
+
 	return w
 }

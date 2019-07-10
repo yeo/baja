@@ -2,6 +2,7 @@ package baja
 
 import (
 	"html/template"
+	"path/filepath"
 	"time"
 
 	"github.com/fatih/color"
@@ -15,20 +16,20 @@ type NodeMeta struct {
 	DateFormatted string
 	Tags          []string
 	Category      string
-	Type          string
-	Theme         string
+	Type          string // node type
+	Theme         string // a custom template file inside theme directory without extension
 }
 
 // Node hold information of a specifc page we are rendering
 type Node struct {
 	Meta *NodeMeta
 	Body template.HTML
-	Name string // the filename without extension
 
-	Raw           string
+	Raw           string // full absolute path to markdown file
 	Path          string
-	BaseDirectory string // the directory without /content part
-	templatePaths []string
+	BaseDirectory string   // the directory without /content part
+	Name          string   // the filename without extension
+	templatePaths []string // a list of template files that are discovered for this node. These templates are used to render content
 }
 
 // ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category
@@ -44,6 +45,17 @@ type NodeDB struct {
 	NodeList      []*Node
 	DirectoryList []string
 	Total         int
+}
+
+// BuildDB calculate a tree to represent all of node
+// This tree can be query/group/filter
+func BuildDB(config *Config) *NodeDB {
+	db := &NodeDB{
+		NodeList: []*Node{},
+	}
+	color.Green("Scan content")
+	_ = filepath.Walk("./content", visit(db))
+	return db
 }
 
 func (db *NodeDB) Append(n *Node) {

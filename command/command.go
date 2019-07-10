@@ -36,11 +36,14 @@ func printHelp() {
 	fmt.Println("baja command [param 1]...[param N]")
 	fmt.Println("  init name to init a new one")
 	fmt.Println("  node path/to/content to create new node")
+	fmt.Println("Default to build")
 }
 
 func Process(args []string) {
 	if len(args) <= 1 {
 		printHelp()
+		registries["build"].Run(args)
+
 		os.Exit(0)
 	}
 

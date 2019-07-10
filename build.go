@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"html/template"
+	"log"
 	"strings"
 	"time"
 
@@ -74,15 +75,6 @@ func visit(db *NodeDB) filepath.WalkFunc {
 	}
 }
 
-func BuildDB(config *Config) *NodeDB {
-	db := &NodeDB{
-		NodeList: []*Node{},
-	}
-	color.Green("Scan content")
-	_ = filepath.Walk("./content", visit(db))
-	return db
-}
-
 func BuildIndex(dir string, nodes []*Node, current *Current) {
 	theme := GetTheme(DefaultConfig())
 
@@ -112,6 +104,11 @@ func BuildIndex(dir string, nodes []*Node, current *Current) {
 
 	tpl, err := template.New("layout").Funcs(FuncMaps()).ParseFiles(theme.LayoutPath("default"))
 	tpl, err = tpl.ParseFiles(theme.NodePath("index"))
+
+	log.Println("Build index", dir, theme.SubPath(dir+".html"))
+	if _, err := os.Stat(theme.SubPath(dir + ".html")); err == nil {
+		tpl, err = tpl.ParseFiles(theme.SubPath(dir + ".html"))
+	}
 
 	if _, err := os.Stat(theme.Path() + dir + "/index.html"); err == nil {
 		tpl, err = tpl.ParseFiles(theme.Path() + dir + "/index.html")

@@ -77,6 +77,7 @@ func (n *Node) data() map[string]interface{} {
 
 func (n *Node) FindTheme(c *Config) {
 	// Find theme
+	theme := GetTheme(DefaultConfig())
 	pathComponents := strings.Split(n.BaseDirectory, "/")
 	n.templatePaths = []string{"themes/" + c.Theme + "/layout/default.html"}
 	lookupPath := "themes/" + c.Theme
@@ -84,13 +85,20 @@ func (n *Node) FindTheme(c *Config) {
 		if _, err := os.Stat(lookupPath + "/node.html"); err == nil {
 			n.templatePaths = append(n.templatePaths, lookupPath+"/node.html")
 		}
+
+		if _, err := os.Stat(lookupPath + "/" + n.Name + ".html"); err == nil {
+			n.templatePaths = append(n.templatePaths, lookupPath+"/"+n.Name+".html")
+		}
+
 		lookupPath = lookupPath + "/" + p
+	}
+
+	if n.Meta.Theme != "" {
+		n.templatePaths = append(n.templatePaths, theme.NodePath(n.Meta.Theme))
 	}
 }
 
 func (n *Node) Compile() {
-	theme := GetTheme(DefaultConfig())
-
 	directory := "public/" + n.BaseDirectory + "/" + n.Name
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
@@ -101,8 +109,8 @@ func (n *Node) Compile() {
 	w := bufio.NewWriter(f)
 
 	tpl := template.New("layout").Funcs(FuncMaps())
-
-	tpl, err = tpl.ParseFiles(theme.LayoutPath("default"), theme.NodePath("node"))
+	log.Println("tpl path =", n.templatePaths)
+	tpl, err = tpl.ParseFiles(n.templatePaths...)
 	if err != nil {
 		log.Panic(err)
 	}

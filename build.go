@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"strings"
 	"time"
 
 	"os"
@@ -175,27 +174,4 @@ func CompileNodes(db *NodeDB) {
 		BuildIndex("tag/"+tag, nodes, current)
 	}
 	color.Green("Done! Enjoy")
-}
-
-func CreateNode(dir, title string) error {
-	slug := strings.Replace(title, " ", "-", -1)
-
-	file, err := os.Create("content/" + dir + "/" + slug + ".md")
-	if err != nil {
-		color.Red("Cannot create file in %s. Check directory permission. Err: err", dir, err)
-		return err
-	}
-
-	defer file.Close()
-
-	content := `+++
-date = "%s"
-title = "%s"
-draft = true
-
-tags = []
-+++`
-	fmt.Fprintf(file, fmt.Sprintf(content, time.Now().Format(time.RFC3339), title))
-
-	return nil
 }

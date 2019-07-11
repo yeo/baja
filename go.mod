@@ -33,6 +33,7 @@ require (
 	github.com/peterh/liner v1.1.0 // indirect
 	github.com/radovskyb/watcher v1.0.6
 	github.com/rogpeppe/godef v1.1.1 // indirect
+	github.com/rs/zerolog v1.14.3
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.3.0 // indirect
@@ -43,10 +44,7 @@ require (
 	github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4 // indirect
 	github.com/zmb3/gogetdoc v0.0.0-20190107174152-de0ca1d07687 // indirect
 	golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045 // indirect
-	golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc // indirect
 	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
-	golang.org/x/sys v0.0.0-20190102155601-82a175fd1598 // indirect
-	golang.org/x/tools v0.0.0-20190108222858-421f03a57a64 // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20180810215634-df19058c872c // indirect
 	gopkg.in/yaml.v2 v2.2.2
 	honnef.co/go/tools v0.0.0-20190106161140-3f1c8253044a // indirect

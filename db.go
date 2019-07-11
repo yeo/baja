@@ -16,7 +16,7 @@ type NodeMeta struct {
 	DateFormatted string
 	Tags          []string
 	Category      string
-	Type          string // node type
+	Type          string // node type. Eg page or post
 	Theme         string // a custom template file inside theme directory without extension
 }
 
@@ -105,8 +105,13 @@ func (db *NodeDB) Publishable() []*Node {
 	nodes := []*Node{}
 
 	for _, node := range db.NodeList {
-		if node.IsPage() || node.Meta.Draft {
-			color.Red("ignore %s page/draft", node.Name)
+		if node.IsPage() {
+			color.Red("\tignore %s because it's a standalone page", node.Name)
+			continue
+		}
+
+		if node.Meta.Draft {
+			color.Red("\tignore %s because it's in draft mode ", node.Name)
 			continue
 		}
 

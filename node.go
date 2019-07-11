@@ -3,14 +3,13 @@ package baja
 import (
 	"bufio"
 	"html/template"
-	//"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/rs/zerolog/log"
 	"github.com/russross/blackfriday"
 	//"github.com/microcosm-cc/bluemonday"
 )
@@ -36,12 +35,14 @@ func NewNode(path string) *Node {
 func (n *Node) Parse() {
 	content, err := ioutil.ReadFile(n.Path)
 	if err != nil {
-		log.Fatal("Cannot parse", n.Path)
+		log.Error().Err(err).Str("Node", n.Path).Str("Message", "Cannot read node")
+
+		return
 	}
 
 	part := strings.Split(string(content), "+++")
 	if len(part) < 3 {
-		log.Fatal("Not enough header/body", n.Path)
+		log.Fatal().Str("path", n.Path).Msg("Not enough header/body")
 	}
 
 	n.Meta = &NodeMeta{}
@@ -103,20 +104,19 @@ func (n *Node) Compile() {
 	os.MkdirAll(directory, os.ModePerm)
 	f, err := os.Create(directory + "/index.html")
 	if err != nil {
-		log.Println("Cannot write to file", err, directory)
+		log.Error().Err(err).Str("Directory", directory).Msg("Cannot create index file in directory")
 	}
 
 	w := bufio.NewWriter(f)
 
 	tpl := template.New("layout").Funcs(FuncMaps())
-	log.Println("tpl path =", n.templatePaths)
 	tpl, err = tpl.ParseFiles(n.templatePaths...)
 	if err != nil {
-		log.Panic(err)
+		log.Panic().Err(err)
 	}
 
 	if err := tpl.Execute(w, n.data()); err != nil {
-		log.Println("Fail to render", err)
+		log.Panic().Str("Node", n.Name).Err(err).Msg("Fail to render node")
 	}
 
 	w.Flush()

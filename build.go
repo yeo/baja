@@ -12,12 +12,13 @@ import (
 	"sort"
 
 	"github.com/fatih/color"
+	"github.com/yeo/baja/cfg"
 	"github.com/yeo/baja/utils"
 )
 
 // Build executes template and content to generate our real static conent
 func Build() int {
-	config := DefaultConfig()
+	config := cfg.Default()
 
 	os.RemoveAll("./public")
 	CompileAsset(config)
@@ -29,7 +30,7 @@ func Build() int {
 }
 
 // CompileAsset copy asset from theme or static into public and also generate a hash version of those file
-func CompileAsset(config *Config) {
+func CompileAsset(config *cfg.Config) {
 	theme := GetTheme(config)
 	utils.CopyDir(theme.SubPath("static/"), "public")
 	utils.CopyDir("static", "public")
@@ -75,7 +76,7 @@ func visit(db *NodeDB) filepath.WalkFunc {
 }
 
 func BuildIndex(dir string, nodes []*Node, current *Current) {
-	theme := GetTheme(DefaultConfig())
+	theme := GetTheme(cfg.Default())
 
 	targetDirectory := "public/" + dir
 	os.MkdirAll(targetDirectory, os.ModePerm)

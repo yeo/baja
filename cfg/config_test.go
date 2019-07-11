@@ -1,4 +1,4 @@
-package baja_test
+package cfg_test
 
 import (
 	. "github.com/onsi/ginkgo"

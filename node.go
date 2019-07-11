@@ -12,6 +12,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/russross/blackfriday"
 	//"github.com/microcosm-cc/bluemonday"
+
+	"github.com/yeo/baja/cfg"
 )
 
 // NewNode creates a *Node object from a path
@@ -26,7 +28,7 @@ func NewNode(path string) *Node {
 	n.Name = filename[0:dotPosition]
 
 	n.Parse()
-	n.FindTheme(DefaultConfig())
+	n.FindTheme(cfg.Config())
 
 	return &n
 }
@@ -76,9 +78,9 @@ func (n *Node) data() map[string]interface{} {
 	}
 }
 
-func (n *Node) FindTheme(c *Config) {
+func (n *Node) FindTheme(c *cfg.Config) {
 	// Find theme
-	theme := GetTheme(DefaultConfig())
+	theme := GetTheme(cfg.Default())
 	pathComponents := strings.Split(n.BaseDirectory, "/")
 	n.templatePaths = []string{"themes/" + c.Theme + "/layout/default.html"}
 	lookupPath := "themes/" + c.Theme

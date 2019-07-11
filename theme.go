@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/yeo/baja/cfg"
 	"github.com/yeo/baja/utils"
 )
 
@@ -13,7 +14,7 @@ type Theme struct {
 	path string
 }
 
-func GetTheme(config *Config) *Theme {
+func GetTheme(config *cfg.Config) *Theme {
 	t := Theme{
 		Name: config.Theme,
 		path: "themes/" + config.Theme + "/",

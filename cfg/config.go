@@ -1,4 +1,4 @@
-package baja
+package cfg
 
 import (
 	"gopkg.in/yaml.v2"
@@ -22,7 +22,7 @@ var (
 	config *Config
 )
 
-func DefaultConfig() *Config {
+func Default() *Config {
 	if config != nil {
 		return config
 	}

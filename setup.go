@@ -3,6 +3,8 @@ package baja
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/yeo/baja/cfg"
 )
 
 // Initalize a new blog directory
@@ -18,7 +20,7 @@ func Setup(name string) error {
 		os.MkdirAll(p, os.ModePerm)
 	}
 
-	c := NewConfig("./" + name + "/baja.yaml")
+	c := cfg.NewConfig("./" + name + "/baja.yaml")
 	c.WriteFile()
 	return nil
 }

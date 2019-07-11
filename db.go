@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+
+	"github.com/yeo/baja/cfg"
 )
 
 // NodeMeta is meta data of a node, usually map directly to node toml metadata section
@@ -49,7 +51,7 @@ type NodeDB struct {
 
 // BuildDB calculate a tree to represent all of node
 // This tree can be query/group/filter
-func BuildDB(config *Config) *NodeDB {
+func BuildDB(config *cfg.Config) *NodeDB {
 	db := &NodeDB{
 		NodeList: []*Node{},
 	}

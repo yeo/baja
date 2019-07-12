@@ -21,6 +21,10 @@ func (db *NodeDB) Append(n *Node) {
 	db.Total = len(db.NodeList)
 }
 
+func (db *NodeDB) All() []*Node {
+	return db.NodeList
+}
+
 // ByTag category groups node by category(category is the directoy name)
 func (db *NodeDB) ByCategory() map[string][]*Node {
 	categoryNodes := make(map[string][]*Node)

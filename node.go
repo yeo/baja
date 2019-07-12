@@ -17,6 +17,11 @@ import (
 	"github.com/yeo/baja/cfg"
 )
 
+const (
+	NodeTypePage = "page"
+	NodeTypePost = "post"
+)
+
 // NodeMeta is meta data of a node, usually map directly to node toml metadata section
 type NodeMeta struct {
 	Title         string
@@ -42,7 +47,7 @@ type Node struct {
 	templatePaths []string // a list of template files that are discovered for this node. These templates are used to render content
 }
 
-// NewNode creates a *Node object from a path
+// NewNode creates a Node object from a path
 func NewNode(path string) *Node {
 	n := Node{Path: path}
 
@@ -83,7 +88,7 @@ func (n *Node) Parse() {
 }
 
 func (n *Node) IsPage() bool {
-	return n.Meta.Type == "page"
+	return n.Meta.Type == NodeTypePage
 }
 
 func (n *Node) Permalink() string {

@@ -1,8 +1,6 @@
 package baja
 
 import (
-	"time"
-
 	"os"
 	"path/filepath"
 
@@ -62,43 +60,28 @@ func CompileAsset(config *cfg.Config) {
 }
 
 func CompileNodes(db *NodeDB) {
-	color.Yellow("Start build html\n  Build individual page")
-	for i, node := range db.NodeList {
+	color.Yellow("Build individual page")
+	for i, node := range db.All() {
 		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
 		node.Compile()
 	}
 
-	// Now build the main index page
-	current.IsHome = true
-	indexNode := IndexNode{"", db.Publishable(), current}
+	indexNode := NewIndex("", db.Publishable())
 	indexNode.Compile()
 
-	// Now build directory inde
-	color.Cyan("  Build category")
+	color.Cyan("Build category")
 	for dir, nodes := range db.ByCategory() {
 		color.Cyan("    %s ", dir)
-		current := &Current{
-			IsHome:     false,
-			IsDir:      true,
-			IsTag:      false,
-			CompiledAt: time.Now(),
-		}
-
-		indexNode := IndexNode{dir, nodes, current}
+		indexNode := NewIndex(dir, nodes)
 		indexNode.Compile()
 	}
 
-	color.Cyan("  Build tag")
+	color.Cyan("Build tag")
 	for tag, nodes := range db.ByTag() {
 		color.Cyan("    %s ", tag)
-		current := &Current{
-			IsHome:     false,
-			IsDir:      false,
-			IsTag:      true,
-			CompiledAt: time.Now(),
-		}
-		indexNode := IndexNode{"tag/" + tag, nodes, current}
+		indexNode := NewIndex("tag/"+tag, nodes)
 		indexNode.Compile()
 	}
-	color.Green("Done! Enjoy")
+
+	color.Green("💥 Done! Enjoy. 🏖")
 }

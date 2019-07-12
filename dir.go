@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/yeo/baja/cfg"
 	"os"
@@ -18,20 +19,32 @@ type IndexNode struct {
 	Current *Current
 }
 
+func NewIndex(dir string, nodes []*Node) *IndexNode {
+	n := &IndexNode{
+		Dir: dir,
+		Current: &Current{
+			IsHome:     false,
+			IsDir:      false,
+			IsTag:      false,
+			CompiledAt: time.Now(),
+		},
+		Nodes: nodes,
+	}
+
+	if dir == "" {
+		n.Current.IsHome = true
+	}
+
+	if strings.HasPrefix(dir, "tag/") {
+		n.Current.IsTag = true
+	} else {
+		n.Current.IsDir = true
+	}
+
+	return n
+}
+
 func (n *IndexNode) Compile() {
-	current := &Current{
-		IsHome:     false,
-		IsDir:      false,
-		IsTag:      false,
-		CompiledAt: time.Now(),
-	}
-
-	if n.Dir == "" {
-		current.IsHome = true
-	}
-
-	if strings.Stat
-
 	theme := GetTheme(cfg.Default())
 
 	targetDirectory := "public/" + n.Dir

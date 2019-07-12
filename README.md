@@ -2,6 +2,11 @@
 
 A minimal static site generator
 
+# Status
+
+Code is crappy at this stage. I mostly work on train and just try to get
+thing done to sync among work/personal laptop.
+
 # Concept
 
 Baja simply looks at a directory and find file recursive and render

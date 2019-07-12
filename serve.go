@@ -6,6 +6,8 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/labstack/echo"
+
+	"github.com/yeo/baja/utils"
 )
 
 type Server struct {
@@ -28,7 +30,7 @@ func Run(addr, public string) {
 
 // Build execute template and content to generate our real static conent
 func Serve(addr, directory string) int {
-	w := Watch([]string{"./content", "./themes"})
+	w := utils.Watch([]string{"./content", "./themes"})
 
 	// Build our site immediately to serve dev
 	go Build()

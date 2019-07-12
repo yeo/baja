@@ -1,29 +1,32 @@
 package baja
 
 import (
-	"bufio"
-	"fmt"
-	"html/template"
-	"log"
 	"time"
 
 	"os"
 	"path/filepath"
-	"sort"
 
 	"github.com/fatih/color"
 	"github.com/yeo/baja/cfg"
 	"github.com/yeo/baja/utils"
 )
 
+// ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category
+type ListPage struct {
+	Current   *Current
+	Title     string
+	Permalink string
+	Nodes     []map[string]interface{}
+}
+
 // Build executes template and content to generate our real static conent
 func Build() int {
 	config := cfg.Default()
 
 	os.RemoveAll("./public")
-	CompileAsset(config)
-
 	db := BuildDB(config)
+
+	CompileAsset(config)
 	CompileNodes(db)
 
 	return 0
@@ -58,96 +61,17 @@ func CompileAsset(config *cfg.Config) {
 	}
 }
 
-type visitor func(path string, f os.FileInfo, err error) error
-
-func visit(db *NodeDB) filepath.WalkFunc {
-
-	return func(path string, f os.FileInfo, err error) error {
-		color.Green("\t%s", path)
-
-		if f.IsDir() {
-			return nil
-		}
-
-		db.Append(NewNode(path))
-
-		return nil
-	}
-}
-
-func BuildIndex(dir string, nodes []*Node, current *Current) {
-	theme := GetTheme(cfg.Default())
-
-	targetDirectory := "public/" + dir
-	os.MkdirAll(targetDirectory, os.ModePerm)
-
-	f, err := os.Create(targetDirectory + "/index.html")
-	if err != nil {
-		fmt.Println("Cannot create index.html in", targetDirectory, ". error", err)
-	}
-
-	w := bufio.NewWriter(f)
-
-	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Meta.Date.After(nodes[j].Meta.Date) })
-	nodeData := make([]map[string]interface{}, len(nodes))
-
-	for i, n := range nodes {
-		nodeData[i] = n.data()
-	}
-
-	data := ListPage{
-		current,
-		dir,
-		dir,
-		nodeData,
-	}
-
-	tpl, err := template.New("layout").Funcs(FuncMaps()).ParseFiles(theme.LayoutPath("default"))
-	tpl, err = tpl.ParseFiles(theme.NodePath("index"))
-
-	log.Println("Build index", dir, theme.SubPath(dir+".html"))
-	if _, err := os.Stat(theme.SubPath(dir + ".html")); err == nil {
-		tpl, err = tpl.ParseFiles(theme.SubPath(dir + ".html"))
-	}
-
-	if _, err := os.Stat(theme.Path() + dir + "/index.html"); err == nil {
-		tpl, err = tpl.ParseFiles(theme.Path() + dir + "/index.html")
-	}
-
-	if current.IsHome {
-		if _, err := os.Stat(theme.NodePath("home")); err == nil {
-			tpl, err = tpl.ParseFiles(theme.NodePath("home"))
-		}
-	}
-
-	if tpl == nil {
-		fmt.Println("Cannot create template render")
-		return
-	}
-
-	if err := tpl.Execute(w, data); err != nil {
-		fmt.Println("Fail to render. Check your template for syntax, wrong tag", err)
-	}
-	w.Flush()
-}
-
 func CompileNodes(db *NodeDB) {
-	// Build individual node
 	color.Yellow("Start build html\n  Build individual page")
 	for i, node := range db.NodeList {
 		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
 		node.Compile()
 	}
 
-	current := &Current{
-		IsHome:     false,
-		IsDir:      false,
-		IsTag:      false,
-		CompiledAt: time.Now(),
-	}
-	// Now build the main index pag
+	// Now build the main index page
 	current.IsHome = true
-	BuildIndex("", db.Publishable(), current)
+	indexNode := IndexNode{"", db.Publishable(), current}
+	indexNode.Compile()
 
 	// Now build directory inde
 	color.Cyan("  Build category")
@@ -160,7 +84,8 @@ func CompileNodes(db *NodeDB) {
 			CompiledAt: time.Now(),
 		}
 
-		BuildIndex(dir, nodes, current)
+		indexNode := IndexNode{dir, nodes, current}
+		indexNode.Compile()
 	}
 
 	color.Cyan("  Build tag")
@@ -172,7 +97,8 @@ func CompileNodes(db *NodeDB) {
 			IsTag:      true,
 			CompiledAt: time.Now(),
 		}
-		BuildIndex("tag/"+tag, nodes, current)
+		indexNode := IndexNode{"tag/" + tag, nodes, current}
+		indexNode.Compile()
 	}
 	color.Green("Done! Enjoy")
 }

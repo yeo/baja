@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/rs/zerolog/log"
@@ -15,6 +16,31 @@ import (
 
 	"github.com/yeo/baja/cfg"
 )
+
+// NodeMeta is meta data of a node, usually map directly to node toml metadata section
+type NodeMeta struct {
+	Title         string
+	Draft         bool
+	Date          time.Time
+	DateFormatted string
+	Tags          []string
+	Category      string
+	Type          string // node type. Eg page or post
+	Theme         string // a custom template file inside theme directory without extension
+}
+
+// Node hold information of a specifc page we are rendering
+type Node struct {
+	Meta *NodeMeta
+	Body template.HTML
+
+	Raw           string // raw text content
+	Path          string // full absolute path to markdown file
+	BaseDirectory string // the directory without /content part
+	Name          string // the filename without extension
+
+	templatePaths []string // a list of template files that are discovered for this node. These templates are used to render content
+}
 
 // NewNode creates a *Node object from a path
 func NewNode(path string) *Node {
@@ -28,7 +54,7 @@ func NewNode(path string) *Node {
 	n.Name = filename[0:dotPosition]
 
 	n.Parse()
-	n.FindTheme(cfg.Config())
+	n.FindTheme(cfg.Default())
 
 	return &n
 }

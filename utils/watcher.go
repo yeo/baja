@@ -1,4 +1,4 @@
-package baja
+package utils
 
 import (
 	"github.com/fatih/color"

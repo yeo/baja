@@ -1,63 +1,19 @@
 package baja
 
 import (
-	"html/template"
+	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/fatih/color"
 
 	"github.com/yeo/baja/cfg"
 )
 
-// NodeMeta is meta data of a node, usually map directly to node toml metadata section
-type NodeMeta struct {
-	Title         string
-	Draft         bool
-	Date          time.Time
-	DateFormatted string
-	Tags          []string
-	Category      string
-	Type          string // node type. Eg page or post
-	Theme         string // a custom template file inside theme directory without extension
-}
-
-// Node hold information of a specifc page we are rendering
-type Node struct {
-	Meta *NodeMeta
-	Body template.HTML
-
-	Raw           string // full absolute path to markdown file
-	Path          string
-	BaseDirectory string   // the directory without /content part
-	Name          string   // the filename without extension
-	templatePaths []string // a list of template files that are discovered for this node. These templates are used to render content
-}
-
-// ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category
-type ListPage struct {
-	Current   *Current
-	Title     string
-	Permalink string
-	Nodes     []map[string]interface{}
-}
-
 // NodeDB is the in-memory database of all the page
 type NodeDB struct {
 	NodeList      []*Node
 	DirectoryList []string
 	Total         int
-}
-
-// BuildDB calculate a tree to represent all of node
-// This tree can be query/group/filter
-func BuildDB(config *cfg.Config) *NodeDB {
-	db := &NodeDB{
-		NodeList: []*Node{},
-	}
-	color.Green("Scan content")
-	_ = filepath.Walk("./content", visit(db))
-	return db
 }
 
 func (db *NodeDB) Append(n *Node) {
@@ -121,4 +77,32 @@ func (db *NodeDB) Publishable() []*Node {
 	}
 
 	return nodes
+}
+
+type visitor func(path string, f os.FileInfo, err error) error
+
+func visit(db *NodeDB) filepath.WalkFunc {
+
+	return func(path string, f os.FileInfo, err error) error {
+		color.Green("\t%s", path)
+
+		if f.IsDir() {
+			return nil
+		}
+
+		db.Append(NewNode(path))
+
+		return nil
+	}
+}
+
+// BuildDB calculate a tree to represent all of node
+// This tree can be query/group/filter
+func BuildDB(config *cfg.Config) *NodeDB {
+	db := &NodeDB{
+		NodeList: []*Node{},
+	}
+	color.Green("Scan content")
+	_ = filepath.Walk("./content", visit(db))
+	return db
 }

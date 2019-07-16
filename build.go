@@ -19,21 +19,20 @@ type ListPage struct {
 
 // Build executes template and content to generate our real static conent
 func Build() int {
-	config := cfg.Default()
+	ctx := NewContext(cfg.Default())
 
 	os.RemoveAll("./public")
-	db := BuildDB(config)
+	db := BuildDB(ctx)
 
-	CompileAsset(config)
+	CompileAsset(ctx)
 	CompileNodes(db)
 
 	return 0
 }
 
 // CompileAsset copy asset from theme or static into public and also generate a hash version of those file
-func CompileAsset(config *cfg.Config) {
-	theme := GetTheme(config)
-	utils.CopyDir(theme.SubPath("static/"), "public")
+func CompileAsset(ctx *Context) {
+	utils.CopyDir(ctx.Theme.SubPath("static/"), "public")
 	utils.CopyDir("static", "public")
 
 	// Now generate hash

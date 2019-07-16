@@ -10,6 +10,8 @@ type SiteConfig struct {
 	Name    string `"yaml":name`
 	Author  string `"yaml":author`
 	BaseURL string `"yaml":baseURL`
+
+	Meta map[string]string
 }
 
 type Config struct {

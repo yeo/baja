@@ -3,6 +3,7 @@ package baja
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -10,8 +11,11 @@ import (
 )
 
 func CreateNode(dir, title string) error {
+	re := regexp.MustCompile(`[^a-zA-Z]+`)
+
 	slug := strings.Replace(title, " ", "-", -1)
 	slug = strings.ToLower(slug)
+	slug = re.ReplaceAllString(slug, "-")
 
 	file, err := os.Create("content/" + dir + "/" + slug + ".md")
 	if err != nil {

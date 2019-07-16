@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
-
-	"github.com/yeo/baja/cfg"
 )
 
 // NodeDB is the in-memory database of all the page
@@ -102,7 +100,7 @@ func visit(db *NodeDB) filepath.WalkFunc {
 
 // BuildDB calculate a tree to represent all of node
 // This tree can be query/group/filter
-func BuildDB(config *cfg.Config) *NodeDB {
+func BuildDB(ctx *Context) *NodeDB {
 	db := &NodeDB{
 		NodeList: []*Node{},
 	}

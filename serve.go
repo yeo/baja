@@ -15,6 +15,7 @@ type Server struct {
 }
 
 func router(e *echo.Echo, s *Server) {
+	e.Static("/deploy", s.staticPath)
 	e.Static("/", s.staticPath)
 }
 

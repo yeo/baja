@@ -59,6 +59,7 @@ func NewNode(site *baja.Site, path string) *Node {
 	n.Name = filename[0:dotPosition]
 
 	n.Parse()
+	log.Print(site)
 	n.FindTheme(site.Config)
 
 	return &n

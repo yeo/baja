@@ -16,7 +16,7 @@ func Build(site *baja.Site) int {
 	ctx := baja.NewContext(site.Config)
 
 	os.RemoveAll("./public")
-	db := node.BuildDB(ctx)
+	db := node.BuildDB(site, ctx)
 
 	CompileAsset(ctx)
 	CompileNodes(db)

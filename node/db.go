@@ -103,9 +103,10 @@ func visit(db *NodeDB) filepath.WalkFunc {
 
 // BuildDB calculate a tree to represent all of node
 // This tree can be query/group/filter
-func BuildDB(ctx *baja.Context) *NodeDB {
+func BuildDB(site *baja.Site, ctx *baja.Context) *NodeDB {
 	db := &NodeDB{
 		NodeList: []*Node{},
+		Site:     site,
 	}
 	color.Green("Scan content")
 	_ = filepath.Walk("./content", visit(db))

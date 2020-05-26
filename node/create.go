@@ -23,7 +23,6 @@ func (cmd *CreateCommand) Help() string {
 }
 
 func (cmd *CreateCommand) Run(site *baja.Site, args []string) int {
-	fmt.Println(args)
 	return Create(site, args[0], args[1])
 }
 

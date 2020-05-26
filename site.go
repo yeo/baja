@@ -44,7 +44,7 @@ func LoadSite(configpath string) *Site {
 	contentPath, _ := filepath.Abs("./content")
 	site := Site{
 		Config: config,
-		Theme:  GetTheme(config),
+		Theme:  NewThemeFromConfig(config),
 		Meta:   &SiteMeta{},
 		Path: &SitePath{
 			// TODO: Load these from config

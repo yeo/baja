@@ -60,20 +60,20 @@ func CompileNodes(db *node.NodeDB) {
 	}
 
 	indexNode := node.NewIndex("", db.Publishable())
-	indexNode.Compile(db.Site.Config)
+	indexNode.Compile(db.Site)
 
 	color.Cyan("Build category")
 	for dir, nodes := range db.ByCategory() {
 		color.Cyan("    %s ", dir)
 		indexNode := node.NewIndex(dir, nodes)
-		indexNode.Compile(db.Site.Config)
+		indexNode.Compile(db.Site)
 	}
 
 	color.Cyan("Build tag")
 	for tag, nodes := range db.ByTag() {
 		color.Cyan("    %s ", tag)
 		indexNode := node.NewIndex("tag/"+tag, nodes)
-		indexNode.Compile(db.Site.Config)
+		indexNode.Compile(db.Site)
 	}
 
 	color.Green("💥 Done! Enjoy. 🏖")

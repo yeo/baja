@@ -59,8 +59,7 @@ func NewNode(site *baja.Site, path string) *Node {
 	n.Name = filename[0:dotPosition]
 
 	n.Parse()
-	log.Print(site)
-	n.FindTheme(site.Config)
+	n.FindTheme(site)
 
 	return &n
 }
@@ -110,9 +109,10 @@ func (n *Node) data() map[string]interface{} {
 	}
 }
 
-func (n *Node) FindTheme(c *baja.Config) {
-	// Find theme
-	theme := baja.GetTheme(c)
+func (n *Node) FindTheme(site *baja.Site) {
+	theme := site.Theme
+	c := site.Config
+
 	pathComponents := strings.Split(n.BaseDirectory, "/")
 	n.templatePaths = []string{"themes/" + c.Theme + "/layout/default.html"}
 	lookupPath := "themes/" + c.Theme

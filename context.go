@@ -13,7 +13,7 @@ type Context struct {
 func NewContext(config *Config) *Context {
 	c := Context{
 		Config: config,
-		Theme:  GetTheme(config),
+		Theme:  NewThemeFromConfig(config),
 		Current: &Current{
 			IsHome: false,
 			IsDir:  true,

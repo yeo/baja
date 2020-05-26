@@ -12,7 +12,7 @@ type Theme struct {
 	path string
 }
 
-func GetTheme(config *Config) *Theme {
+func NewThemeFromConfig(config *Config) *Theme {
 	path, _ := filepath.Abs("themes/" + config.Theme)
 
 	t := Theme{

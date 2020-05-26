@@ -53,8 +53,8 @@ func NewIndex(dir string, nodes []*Node) *IndexNode {
 	return n
 }
 
-func (n *IndexNode) Compile(config *baja.Config) {
-	theme := baja.GetTheme(config)
+func (n *IndexNode) Compile(site *baja.Site) {
+	theme := site.Theme
 
 	targetDirectory := "public/" + n.Dir
 	os.MkdirAll(targetDirectory, os.ModePerm)

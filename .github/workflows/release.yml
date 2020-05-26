@@ -29,7 +29,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset for mac
-        id: upload-release-asset 
+        id: upload-release-asset-mac
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,7 +39,7 @@ jobs:
           asset_name: baja-mac
           #asset_content_type: application/zip
       - name: Upload Release Asset for linux
-        id: upload-release-asset 
+        id: upload-release-asset-linux
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

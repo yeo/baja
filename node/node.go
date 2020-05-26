@@ -1,4 +1,4 @@
-package baja
+package node
 
 import (
 	"bufio"
@@ -14,7 +14,7 @@ import (
 	"github.com/russross/blackfriday"
 	//"github.com/microcosm-cc/bluemonday"
 
-	"github.com/yeo/baja/cfg"
+	"github.com/yeo/baja"
 )
 
 const (
@@ -48,7 +48,7 @@ type Node struct {
 }
 
 // NewNode creates a Node object from a path
-func NewNode(path string) *Node {
+func NewNode(site *baja.Site, path string) *Node {
 	n := Node{Path: path}
 
 	// Remove content from path to get base directory
@@ -59,7 +59,7 @@ func NewNode(path string) *Node {
 	n.Name = filename[0:dotPosition]
 
 	n.Parse()
-	n.FindTheme(cfg.Default())
+	n.FindTheme(site.Config)
 
 	return &n
 }
@@ -109,9 +109,9 @@ func (n *Node) data() map[string]interface{} {
 	}
 }
 
-func (n *Node) FindTheme(c *cfg.Config) {
+func (n *Node) FindTheme(c *baja.Config) {
 	// Find theme
-	theme := GetTheme(cfg.Default())
+	theme := baja.GetTheme(c)
 	pathComponents := strings.Split(n.BaseDirectory, "/")
 	n.templatePaths = []string{"themes/" + c.Theme + "/layout/default.html"}
 	lookupPath := "themes/" + c.Theme
@@ -142,7 +142,7 @@ func (n *Node) Compile() {
 
 	w := bufio.NewWriter(f)
 
-	tpl := template.New("layout").Funcs(FuncMaps())
+	tpl := template.New("layout").Funcs(baja.FuncMaps())
 	tpl, err = tpl.ParseFiles(n.templatePaths...)
 	if err != nil {
 		log.Panic().Err(err)

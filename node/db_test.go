@@ -1,4 +1,4 @@
-package cfg_test
+package node_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -7,7 +7,7 @@ import (
 	. "github.com/yeo/baja"
 )
 
-var _ = Describe("Config", func() {
+var _ = Describe("Baja", func() {
 	Describe("NodeDB", func() {
 		Describe("Append", func() {
 			It("appends node to db", func() {

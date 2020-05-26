@@ -1,10 +1,12 @@
-package baja
+package node
 
 import (
 	"os"
 	"path/filepath"
 
 	"github.com/fatih/color"
+
+	"github.com/yeo/baja"
 )
 
 // NodeDB is the in-memory database of all the page
@@ -12,6 +14,7 @@ type NodeDB struct {
 	NodeList      []*Node
 	DirectoryList []string
 	Total         int
+	Site          *baja.Site
 }
 
 func (db *NodeDB) Append(n *Node) {
@@ -92,7 +95,7 @@ func visit(db *NodeDB) filepath.WalkFunc {
 			return nil
 		}
 
-		db.Append(NewNode(path))
+		db.Append(NewNode(db.Site, path))
 
 		return nil
 	}
@@ -100,7 +103,7 @@ func visit(db *NodeDB) filepath.WalkFunc {
 
 // BuildDB calculate a tree to represent all of node
 // This tree can be query/group/filter
-func BuildDB(ctx *Context) *NodeDB {
+func BuildDB(ctx *baja.Context) *NodeDB {
 	db := &NodeDB{
 		NodeList: []*Node{},
 	}

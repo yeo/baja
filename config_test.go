@@ -7,7 +7,7 @@ import (
 	. "github.com/yeo/baja"
 )
 
-var _ = Describe("Baja", func() {
+var _ = Describe("Config", func() {
 	Describe("NodeDB", func() {
 		Describe("Append", func() {
 			It("appends node to db", func() {

@@ -1,4 +1,4 @@
-package baja
+package node
 
 import (
 	"bufio"
@@ -8,21 +8,30 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yeo/baja/cfg"
 	"os"
 	"sort"
+
+	"github.com/yeo/baja"
 )
+
+// ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category
+type ListPage struct {
+	Current   *baja.Current
+	Title     string
+	Permalink string
+	Nodes     []map[string]interface{}
+}
 
 type IndexNode struct {
 	Dir     string
 	Nodes   []*Node
-	Current *Current
+	Current *baja.Current
 }
 
 func NewIndex(dir string, nodes []*Node) *IndexNode {
 	n := &IndexNode{
 		Dir: dir,
-		Current: &Current{
+		Current: &baja.Current{
 			IsHome:     false,
 			IsDir:      false,
 			IsTag:      false,
@@ -44,8 +53,8 @@ func NewIndex(dir string, nodes []*Node) *IndexNode {
 	return n
 }
 
-func (n *IndexNode) Compile() {
-	theme := GetTheme(cfg.Default())
+func (n *IndexNode) Compile(config *baja.Config) {
+	theme := baja.GetTheme(config)
 
 	targetDirectory := "public/" + n.Dir
 	os.MkdirAll(targetDirectory, os.ModePerm)
@@ -71,7 +80,7 @@ func (n *IndexNode) Compile() {
 		nodeData,
 	}
 
-	tpl, err := template.New("layout").Funcs(FuncMaps()).ParseFiles(theme.LayoutPath("default"))
+	tpl, err := template.New("layout").Funcs(baja.FuncMaps()).ParseFiles(theme.LayoutPath("default"))
 	tpl, err = tpl.ParseFiles(theme.NodePath("index"))
 
 	log.Println("Build index", n.Dir, theme.SubPath(n.Dir+".html"))

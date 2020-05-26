@@ -2,17 +2,15 @@ package baja
 
 import (
 	"time"
-
-	"github.com/yeo/baja/cfg"
 )
 
 type Context struct {
-	Config  *cfg.Config
+	Config  *Config
 	Current *Current
 	Theme   *Theme
 }
 
-func NewContext(config *cfg.Config) *Context {
+func NewContext(config *Config) *Context {
 	c := Context{
 		Config: config,
 		Theme:  GetTheme(config),

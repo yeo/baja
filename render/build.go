@@ -1,28 +1,22 @@
-package baja
+package render
 
 import (
 	"os"
 	"path/filepath"
 
 	"github.com/fatih/color"
-	"github.com/yeo/baja/cfg"
+
+	"github.com/yeo/baja"
+	"github.com/yeo/baja/node"
 	"github.com/yeo/baja/utils"
 )
 
-// ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category
-type ListPage struct {
-	Current   *Current
-	Title     string
-	Permalink string
-	Nodes     []map[string]interface{}
-}
-
 // Build executes template and content to generate our real static conent
-func Build() int {
-	ctx := NewContext(cfg.Default())
+func Build(site *baja.Site) int {
+	ctx := baja.NewContext(site.Config)
 
 	os.RemoveAll("./public")
-	db := BuildDB(ctx)
+	db := node.BuildDB(ctx)
 
 	CompileAsset(ctx)
 	CompileNodes(db)
@@ -31,7 +25,7 @@ func Build() int {
 }
 
 // CompileAsset copy asset from theme or static into public and also generate a hash version of those file
-func CompileAsset(ctx *Context) {
+func CompileAsset(ctx *baja.Context) {
 	utils.CopyDir(ctx.Theme.SubPath("static/"), "public")
 	utils.CopyDir("static", "public")
 
@@ -58,28 +52,28 @@ func CompileAsset(ctx *Context) {
 	}
 }
 
-func CompileNodes(db *NodeDB) {
+func CompileNodes(db *node.NodeDB) {
 	color.Yellow("Build individual page")
 	for i, node := range db.All() {
 		color.Yellow("\t%d/%d:  %s\n", i+1, db.Total, node.Path)
 		node.Compile()
 	}
 
-	indexNode := NewIndex("", db.Publishable())
-	indexNode.Compile()
+	indexNode := node.NewIndex("", db.Publishable())
+	indexNode.Compile(db.Site.Config)
 
 	color.Cyan("Build category")
 	for dir, nodes := range db.ByCategory() {
 		color.Cyan("    %s ", dir)
-		indexNode := NewIndex(dir, nodes)
-		indexNode.Compile()
+		indexNode := node.NewIndex(dir, nodes)
+		indexNode.Compile(db.Site.Config)
 	}
 
 	color.Cyan("Build tag")
 	for tag, nodes := range db.ByTag() {
 		color.Cyan("    %s ", tag)
-		indexNode := NewIndex("tag/"+tag, nodes)
-		indexNode.Compile()
+		indexNode := node.NewIndex("tag/"+tag, nodes)
+		indexNode.Compile(db.Site.Config)
 	}
 
 	color.Green("💥 Done! Enjoy. 🏖")

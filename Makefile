@@ -9,9 +9,9 @@ build:
 
 release:
 	cd cmd && GOOS=linux go build -o ../out/baja $(ldflags)
-	cd cmd && zip baja-linux.zip baja
+	cd out && zip baja-linux.zip baja
 	cd cmd && go build -o ../out/baja $(ldflags)
-	cd cmd && zip baja-mac.zip baja
+	cd out && zip baja-mac.zip baja
 
 install:
 	cp out/$(APP) ~/bin/

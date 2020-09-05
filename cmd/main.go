@@ -34,7 +34,7 @@ func printHelp(registries map[string]CmdRunner) {
 }
 
 func main() {
-	fmt.Printf("Baja %s.%s\n\n", AppVersion, GitCommit)
+	fmt.Printf("Baja %s. Rev %s\n\n", AppVersion, GitCommit)
 
 	registries := make(map[string]CmdRunner)
 	registries["init"] = &baja.InitCommand{}

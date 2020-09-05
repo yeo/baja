@@ -1,5 +1,5 @@
 APP := baja
-VERSION ?= 0.4
+VERSION ?= 0.4.1
 GIT_COMMIT ?= $(shell git rev-list -1 HEAD)
 
 ldflags = -ldflags "-X main.GitCommit=$(GIT_COMMIT) -X main.AppVersion=$(VERSION)"

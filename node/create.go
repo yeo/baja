@@ -23,6 +23,11 @@ func (cmd *CreateCommand) Help() string {
 }
 
 func (cmd *CreateCommand) Run(site *baja.Site, args []string) int {
+	if len(args) < 2 {
+		color.Red("Usage: baja create node-type file-name")
+		return 1
+	}
+
 	return Create(site, args[0], args[1])
 }
 
@@ -30,8 +35,14 @@ func Create(site *baja.Site, dir, title string) int {
 	re := regexp.MustCompile(`[^a-zA-Z]+`)
 
 	slug := strings.Replace(title, " ", "-", -1)
+
+	current_time := time.Now()
+
 	slug = strings.ToLower(slug)
 	slug = re.ReplaceAllString(slug, "-")
+
+	// filename with date in it to help sorting
+	slug = current_time.Format("2006-01-02") + "-" + slug
 
 	file, err := os.Create("content/" + dir + "/" + slug + ".md")
 	if err != nil {
@@ -49,6 +60,7 @@ draft = true
 tags = []
 +++`
 	fmt.Fprintf(file, fmt.Sprintf(content, time.Now().Format(time.RFC3339), title))
+	collor.Green("Create file %s", file)
 
 	return 0
 }

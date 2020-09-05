@@ -60,7 +60,7 @@ draft = true
 tags = []
 +++`
 	fmt.Fprintf(file, fmt.Sprintf(content, time.Now().Format(time.RFC3339), title))
-	collor.Green("Create file %s", file)
+	color.Green("Create file %s", file)
 
 	return 0
 }

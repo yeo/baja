@@ -4,7 +4,10 @@ GIT_COMMIT ?= $(shell git rev-list -1 HEAD)
 
 ldflags = -ldflags "-X main.GitCommit=$(GIT_COMMIT) -X main.AppVersion=$(VERSION)"
 
-build:
+clean:
+	rm out/$(APP)
+
+build: clean
 	cd cmd && go build -o ../out/$(APP) $(ldflags)
 
 release:
@@ -14,4 +17,5 @@ release:
 	cd out && zip baja-mac.zip baja
 
 install:
+	rm ~/bin/baja
 	cp out/$(APP) ~/bin/

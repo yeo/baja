@@ -57,6 +57,8 @@ func Run(addr, public string) {
 	}
 	router(e, s)
 
+	hostname, _ := os.Hostname()
+	log.Printf("Listen on http://%s:%d", hostname, 2803)
 	e.Logger.Fatal(e.Start(addr))
 }
 

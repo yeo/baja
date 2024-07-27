@@ -1,11 +1,11 @@
 APP := baja
-VERSION ?= 0.4.1
+VERSION ?= 0.5.0
 GIT_COMMIT ?= $(shell git rev-list -1 HEAD)
 
 ldflags = -ldflags "-X main.GitCommit=$(GIT_COMMIT) -X main.AppVersion=$(VERSION)"
 
 clean:
-	rm out/$(APP)
+	rm out/$(APP) || true
 
 build: clean
 	cd cmd && go build -o ../out/$(APP) $(ldflags)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/yeo/baja"
+	baja "github.com/yeo/baja/common"
 )
 
 type Command struct {

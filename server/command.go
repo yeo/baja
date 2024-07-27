@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/yeo/baja"
+	baja "github.com/yeo/baja/common"
 )
 
 type ServerCommand struct{}
@@ -25,5 +25,5 @@ func (cmd *ServerCommand) Run(site *baja.Site, args []string) int {
 			addr = addr + ":2803"
 		}
 	}
-	return Serve(addr, "./public")
+	return Serve(site, addr, "./public")
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/yeo/baja"
+	baja "github.com/yeo/baja/common"
 	"github.com/yeo/baja/node"
 	"github.com/yeo/baja/utils"
 )

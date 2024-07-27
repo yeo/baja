@@ -12,9 +12,10 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/rs/zerolog/log"
 	"github.com/russross/blackfriday"
+
 	//"github.com/microcosm-cc/bluemonday"
 
-	"github.com/yeo/baja"
+	baja "github.com/yeo/baja/common"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/yeo/baja"
+	baja "github.com/yeo/baja/common"
 )
 
 // NodeDB is the in-memory database of all the page

@@ -9,6 +9,8 @@ import (
 	"github.com/labstack/echo"
 
 	"github.com/mholt/archiver"
+	baja "github.com/yeo/baja/common"
+	"github.com/yeo/baja/render"
 	"github.com/yeo/baja/utils"
 )
 
@@ -63,18 +65,18 @@ func Run(addr, public string) {
 }
 
 // Build execute template and content to generate our real static conent
-func Serve(addr, directory string) int {
+func Serve(site *baja.Site, addr, directory string) int {
 	w := utils.Watch([]string{"./content", "./themes"})
 
 	// Build our site immediately to serve dev
-	//go Build()
+	go render.Build(site)
 
 	go func() {
 		for {
 			select {
 			case event := <-w.Event:
 				color.Yellow("Receive file change event %s. Rebuild", event)
-				//Build()
+				render.Build(site)
 			case err := <-w.Error:
 				color.Red("Watch error:%s", err)
 			case <-w.Closed:

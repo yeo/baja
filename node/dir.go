@@ -11,7 +11,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/yeo/baja"
+	baja "github.com/yeo/baja/common"
 )
 
 // ListPage is an index page, it isn't constructed from a markdown file but from a list of related markdown such as tag or category

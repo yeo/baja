@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/yeo/baja"
 	"github.com/yeo/baja/cleaner"
+	baja "github.com/yeo/baja/common"
 	"github.com/yeo/baja/node"
 	"github.com/yeo/baja/render"
 	"github.com/yeo/baja/server"

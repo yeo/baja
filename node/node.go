@@ -23,12 +23,17 @@ const (
 	NodeTypePost = "post"
 )
 
+type NodeStat struct {
+	WordsCount int
+}
+
 // NodeMeta is meta data of a node, usually map directly to node toml metadata section
 type NodeMeta struct {
 	Title         string
 	Draft         bool
 	Date          time.Time
 	DateFormatted string
+	Stat          NodeStat
 	Tags          []string
 	Category      string
 	Type          string // node type. Eg page or post
@@ -84,6 +89,10 @@ func (n *Node) Parse() {
 
 	n.Meta.DateFormatted = n.Meta.Date.Format("2006 Jan 02")
 	n.Meta.Category = n.BaseDirectory
+
+	n.Meta.Stat = NodeStat{
+		WordsCount: len(strings.Fields(part[2])),
+	}
 
 	n.Body = template.HTML(part[2])
 }
